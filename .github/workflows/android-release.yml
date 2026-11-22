@@ -1,0 +1,41 @@
+name: Android test APK
+
+on:
+  push:
+    tags:
+      - "v*-test"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK packages
+        run: sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+      - name: Install .NET Android workload
+        run: dotnet workload install android
+      - name: Build test APK
+        run: |
+          dotnet publish android/Dartsview.Android.csproj -c Release -f net8.0-android -p:AndroidPackageFormat=apk
+          cp android/bin/Release/net8.0-android/de.toenizz.dartsview-Signed.apk Dartsview-test.apk
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Dartsview ${{ github.ref_name }} (Test)
+          generate_release_notes: true
+          files: Dartsview-test.apk
+          body: |
+            Android test build signed with the default Android debug key.
+            This APK is not suitable for Play Store distribution or reliable in-place upgrades.
+            A private release signing key is required for permanent distribution.

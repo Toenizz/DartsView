@@ -1,0 +1,29 @@
+{
+  "source": {
+    "name": "Name des autorisierten Anbieters",
+    "url": "https://anbieter.example/epg",
+    "retrievedAt": "2026-01-01T12:00:00Z",
+    "rightsReviewedAt": "2026-01-01T12:00:00Z"
+  },
+  "events": [
+    {
+      "id": "provider-unique-event-id",
+      "tournament": "Turniername",
+      "stage": "Runde oder Session",
+      "start": "2026-01-01T19:00:00+01:00",
+      "stop": "2026-01-01T22:00:00+01:00",
+      "venue": "Veranstaltungsort",
+      "city": "Stadt",
+      "country": "Land",
+      "participants": "Spieler A vs. Spieler B",
+      "broadcasts": [
+        {
+          "territory": "Deutschland",
+          "channel": "Bestätigter Sender",
+          "url": "https://sender.example/programm"
+        }
+      ],
+      "sourceUrl": "https://anbieter.example/event/provider-unique-event-id"
+    }
+  ]
+}
