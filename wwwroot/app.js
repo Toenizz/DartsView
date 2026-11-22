@@ -369,7 +369,10 @@ function updateSourceStatus() {
 function updateFilters() {
   const currentCountry = elements.country.value;
   const allEvents = getAllEvents().filter(isInRange);
-  const countries = [...new Set(allEvents.flatMap(event => event.broadcasts.map(item => item.territory)))].sort();
+  const dachCountries = ['Deutschland', 'Österreich', 'Schweiz', 'United Kingdom'];
+  const countries = [...new Set(allEvents.flatMap(event => event.broadcasts.map(item => item.territory)))]
+    .filter(c => dachCountries.includes(c))
+    .sort();
   elements.country.replaceChildren(new Option('Alle Länder', ''));
   for (const country of countries) elements.country.add(new Option(country, country));
   elements.country.value = countries.includes(currentCountry) ? currentCountry : '';

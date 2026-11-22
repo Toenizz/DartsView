@@ -1,0 +1,319 @@
+{
+  "source": {
+    "name": "RadioTimes UK Darts TV Schedule",
+    "url": "https://www.radiotimes.com/tv/sport/darts/",
+    "retrievedAt": "2026-11-22T12:00:00Z",
+    "rightsReviewedAt": "2026-11-22T12:00:00Z",
+    "scope": "UK major darts tournaments 2026"
+  },
+  "events": [
+    {
+      "id": "grand-slam-2026",
+      "tournament": "Grand Slam of Darts",
+      "stage": "Group Stage - Day 1",
+      "start": "2026-11-14T13:00:00+00:00",
+      "stop": "2026-11-14T23:00:00+00:00",
+      "venue": "WV Active Aldersley",
+      "city": "Wolverhampton",
+      "country": "England",
+      "participants": "48 players - Group Stage",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Main Event",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Mix",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports+",
+          "url": "https://www.sky.com/shop/tv/sports"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/grand-slam-of-darts-2026-tv/"
+    },
+    {
+      "id": "grand-slam-2026-day2",
+      "tournament": "Grand Slam of Darts",
+      "stage": "Group Stage - Day 2",
+      "start": "2026-11-15T13:00:00+00:00",
+      "stop": "2026-11-15T23:00:00+00:00",
+      "venue": "WV Active Aldersley",
+      "city": "Wolverhampton",
+      "country": "England",
+      "participants": "48 players - Group Stage",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Main Event",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Mix",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports+",
+          "url": "https://www.sky.com/shop/tv/sports"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/grand-slam-of-darts-2026-tv/"
+    },
+    {
+      "id": "grand-slam-2026-ko",
+      "tournament": "Grand Slam of Darts",
+      "stage": "Knockout Stage",
+      "start": "2026-11-18T19:00:00+00:00",
+      "stop": "2026-11-22T22:00:00+00:00",
+      "venue": "WV Active Aldersley",
+      "city": "Wolverhampton",
+      "country": "England",
+      "participants": "Last 16 through to Final",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Main Event",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Mix",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports+",
+          "url": "https://www.sky.com/shop/tv/sports"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/grand-slam-of-darts-2026-tv/"
+    },
+    {
+      "id": "premier-league-2026-weekly",
+      "tournament": "Premier League Darts",
+      "stage": "Weekly League Nights",
+      "start": "2026-02-05T19:00:00+00:00",
+      "stop": "2026-05-28T22:00:00+00:00",
+      "venue": "Various UK Arenas",
+      "city": "Various",
+      "country": "England",
+      "participants": "8 players - League Phase",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Main Event",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports+",
+          "url": "https://www.sky.com/shop/tv/sports"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/premier-league-darts-2026-tv/"
+    },
+    {
+      "id": "premier-league-2026-playoffs",
+      "tournament": "Premier League Darts",
+      "stage": "Play-offs & Final",
+      "start": "2026-05-28T19:00:00+00:00",
+      "stop": "2026-05-28T23:00:00+00:00",
+      "venue": "The O2 Arena",
+      "city": "London",
+      "country": "England",
+      "participants": "Top 4 - Semi-finals & Final",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Main Event",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports+",
+          "url": "https://www.sky.com/shop/tv/sports"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/premier-league-darts-2026-tv/"
+    },
+    {
+      "id": "world-cup-2026",
+      "tournament": "World Cup of Darts",
+      "stage": "Group Stage & Knockout",
+      "start": "2026-06-11T12:00:00+01:00",
+      "stop": "2026-06-14T22:00:00+01:00",
+      "venue": "Eissporthalle",
+      "city": "Frankfurt",
+      "country": "Germany",
+      "participants": "40 nations - Pairs format",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Action",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Main Event",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports+",
+          "url": "https://www.sky.com/shop/tv/sports"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/world-cup-of-darts-2026-tv/"
+    },
+    {
+      "id": "european-championship-2026",
+      "tournament": "European Championship",
+      "stage": "Quarter-finals",
+      "start": "2026-10-25T11:00:00+01:00",
+      "stop": "2026-10-25T18:00:00+01:00",
+      "venue": "Westfalenhallen",
+      "city": "Dortmund",
+      "country": "Germany",
+      "participants": "Last 8 players",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "ITV4",
+          "url": "https://www.itv.com/"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "ITVX",
+          "url": "https://www.itv.com/watch/itvx"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/european-championship-2026-tv/"
+    },
+    {
+      "id": "european-championship-2026-finals",
+      "tournament": "European Championship",
+      "stage": "Semi-finals & Final",
+      "start": "2026-10-25T17:00:00+01:00",
+      "stop": "2026-10-25T23:00:00+01:00",
+      "venue": "Westfalenhallen",
+      "city": "Dortmund",
+      "country": "Germany",
+      "participants": "Last 4 + Final",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "ITV4",
+          "url": "https://www.itv.com/"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "ITVX",
+          "url": "https://www.itv.com/watch/itvx"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/european-championship-2026-tv/"
+    },
+    {
+      "id": "world-grand-prix-2026",
+      "tournament": "World Grand Prix",
+      "stage": "Early Rounds",
+      "start": "2026-09-28T17:00:00+01:00",
+      "stop": "2026-10-03T22:00:00+01:00",
+      "venue": "Mattioli Arena",
+      "city": "Leicester",
+      "country": "England",
+      "participants": "32 players - Double-in Double-out",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Main Event",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports+",
+          "url": "https://www.sky.com/shop/tv/sports"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/darts-world-grand-prix-2026-tv/"
+    },
+    {
+      "id": "world-grand-prix-2026-final",
+      "tournament": "World Grand Prix",
+      "stage": "Final",
+      "start": "2026-10-04T19:00:00+01:00",
+      "stop": "2026-10-04T22:00:00+01:00",
+      "venue": "Mattioli Arena",
+      "city": "Leicester",
+      "country": "England",
+      "participants": "Final - Best of 13 sets",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports Main Event",
+          "url": "https://www.sky.com/shop/tv/sports"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "Sky Sports+",
+          "url": "https://www.sky.com/shop/tv/sports"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/darts-world-grand-prix-2026-tv/"
+    },
+    {
+      "id": "world-series-finals-2026",
+      "tournament": "World Series of Darts Finals",
+      "stage": "Quarter-finals",
+      "start": "2026-09-20T11:00:00+01:00",
+      "stop": "2026-09-20T18:00:00+01:00",
+      "venue": "AFAS Live",
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "participants": "Last 8 players",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "ITV4",
+          "url": "https://www.itv.com/"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "ITVX",
+          "url": "https://www.itv.com/watch/itvx"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/world-series-darts-2026-tv/"
+    },
+    {
+      "id": "world-series-finals-2026-sf",
+      "tournament": "World Series of Darts Finals",
+      "stage": "Semi-finals & Final",
+      "start": "2026-09-20T17:00:00+01:00",
+      "stop": "2026-09-20T23:00:00+01:00",
+      "venue": "AFAS Live",
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "participants": "Last 4 + Final",
+      "broadcasts": [
+        {
+          "territory": "United Kingdom",
+          "channel": "ITV4",
+          "url": "https://www.itv.com/"
+        },
+        {
+          "territory": "United Kingdom",
+          "channel": "ITVX",
+          "url": "https://www.itv.com/watch/itvx"
+        }
+      ],
+      "sourceUrl": "https://www.radiotimes.com/tv/sport/darts/world-series-darts-2026-tv/"
+    }
+  ]
+}
