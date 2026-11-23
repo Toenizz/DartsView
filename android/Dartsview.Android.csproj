@@ -1,15 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-android</TargetFramework>
+    <TargetFramework>net10.0-android36.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationId>de.toenizz.dartsview</ApplicationId>
-    <ApplicationVersion>4</ApplicationVersion>
-    <ApplicationDisplayVersion>0.1.5</ApplicationDisplayVersion>
+    <ApplicationVersion>5</ApplicationVersion>
+    <ApplicationDisplayVersion>0.1.6</ApplicationDisplayVersion>
     <SupportedOSPlatformVersion>23.0</SupportedOSPlatformVersion>
-    <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidManifest>AndroidManifest.xml</AndroidManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PlayStoreBuild)' == 'true'">
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidKeyStore>true</AndroidKeyStore>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Program.cs" Link="Data\Program.cs" />
@@ -17,4 +20,11 @@
       <Link>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </AndroidAsset>
   </ItemGroup>
+  <Target Name="ValidatePlayStoreSigning" BeforeTargets="PrepareForBuild" Condition="'$(PlayStoreBuild)' == 'true'">
+    <Error Condition="'$(AndroidSigningKeyStore)' == ''" Text="Set AndroidSigningKeyStore to the existing upload keystore." />
+    <Error Condition="'$(AndroidSigningKeyStore)' != '' and !Exists('$(AndroidSigningKeyStore)')" Text="AndroidSigningKeyStore does not exist." />
+    <Error Condition="'$(AndroidSigningKeyAlias)' == ''" Text="Set AndroidSigningKeyAlias to the existing upload-key alias." />
+    <Error Condition="'$(AndroidSigningKeyPass)' == ''" Text="Set AndroidSigningKeyPass through a secure environment variable." />
+    <Error Condition="'$(AndroidSigningStorePass)' == ''" Text="Set AndroidSigningStorePass through a secure environment variable." />
+  </Target>
 </Project>

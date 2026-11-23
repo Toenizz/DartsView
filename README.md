@@ -26,15 +26,23 @@ Veröffentlichte Paarungen erscheinen direkt im 14-Tage-Spielplan. Wenn eine Que
 
 Die App prüft keine Verbreitungsrechte der Sender. Angaben im EPG sind keine Bestätigung, dass ein Programm in jedem Gebiet empfangbar oder lizenziert ist.
 
-## Android-Test-APK
+## Android-Play-Store-Build
 
-Das Android-Projekt verwendet dieselben Feed-Parser und Frontend-Dateien wie die Web-App. Zum lokalen Bauen:
+Das Android-Projekt verwendet dieselben Feed-Parser und Frontend-Dateien wie die Web-App und zielt auf Android 16 (API 36), wie es Google Play für neue Apps und Updates seit dem 31. August 2026 verlangt. Der Store-Build erzeugt ein signiertes Android App Bundle (AAB) mit dem vorhandenen Upload-Keystore; ein Debug-Schlüssel wird für diesen Build nicht verwendet. In der Play Console sollte Play App Signing aktiviert sein. Google signiert dann die an Nutzer verteilten Pakete mit dem App-Signaturschlüssel. Vor jedem Store-Upload muss der `ApplicationVersion`-Code höher als der zuletzt in der Play Console hochgeladene Code sein.
+
+Der private Keystore und seine Passwörter dürfen nicht ins Repository eingecheckt oder hier im Chat geteilt werden. Für GitHub Actions unter **Settings → Secrets and variables → Actions** müssen diese Repository-Secrets gesetzt werden:
+
+- `ANDROID_SIGNING_KEYSTORE_BASE64`: vorhandene `.jks`-/`.keystore`-Datei als einzeiliger Base64-Text
+- `ANDROID_SIGNING_KEY_ALIAS`
+- `ANDROID_SIGNING_KEY_PASSWORD`
+- `ANDROID_SIGNING_STORE_PASSWORD`
+
+Den Base64-Wert kannst du lokal in PowerShell erzeugen:
 
 ```powershell
-dotnet workload install android
-dotnet publish .\android\Dartsview.Android.csproj -c Release -f net8.0-android
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\secure\dartsview-upload.jks"))
 ```
 
-Die APK liegt anschließend unter `android\bin\Release\net8.0-android\de.toenizz.dartsview-Signed.apk`. GitHub Releases mit einem `v*-test`-Tag werden automatisch gebaut und als Test-APK angehängt.
+Ein Tag wie `v0.1.6-playstore` startet den signierten AAB-Build und hängt `Dartsview-playstore.aab` an ein GitHub Release an. Dieses AAB kann anschließend in der Play Console hochgeladen werden; die Workflow-Automatisierung veröffentlicht es nicht selbst im Store. Der Play-Store-Build bricht explizit ab, wenn Keystore oder Zugangsdaten fehlen.
 
 Test-APKs sind mit dem Android-Debug-Schlüssel signiert. Sie sind nicht für den Play Store oder als dauerhaft aktualisierbare Installation gedacht; spätere Builds können einen anderen Schlüssel verwenden. Für eine dauerhafte Verteilung muss ein eigener privater Release-Schlüssel eingerichtet werden.

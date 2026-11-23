@@ -1,9 +1,9 @@
-name: Android test APK
+name: Android Play Store bundle
 
 on:
   push:
     tags:
-      - "v*-test"
+      - "v*-playstore"
 
 permissions:
   contents: write
@@ -15,27 +15,52 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 10.0.x
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - uses: android-actions/setup-android@v4
       - name: Install Android SDK packages
-        run: sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+        run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
       - name: Install .NET Android workload
         run: dotnet workload install android
-      - name: Build test APK
+      - name: Prepare existing upload keystore
+        env:
+          ANDROID_SIGNING_KEYSTORE_BASE64: ${{ secrets.ANDROID_SIGNING_KEYSTORE_BASE64 }}
+          ANDROID_SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGNING_KEY_ALIAS }}
+          ANDROID_SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
+          ANDROID_SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
         run: |
-          dotnet publish android/Dartsview.Android.csproj -c Release -f net8.0-android -p:AndroidPackageFormat=apk
-          cp android/bin/Release/net8.0-android/de.toenizz.dartsview-Signed.apk Dartsview-test.apk
-      - name: Create GitHub release
+          set -euo pipefail
+          test -n "$ANDROID_SIGNING_KEYSTORE_BASE64" || { echo "::error::Missing secret ANDROID_SIGNING_KEYSTORE_BASE64"; exit 1; }
+          test -n "$ANDROID_SIGNING_KEY_ALIAS" || { echo "::error::Missing secret ANDROID_SIGNING_KEY_ALIAS"; exit 1; }
+          test -n "$ANDROID_SIGNING_KEY_PASSWORD" || { echo "::error::Missing secret ANDROID_SIGNING_KEY_PASSWORD"; exit 1; }
+          test -n "$ANDROID_SIGNING_STORE_PASSWORD" || { echo "::error::Missing secret ANDROID_SIGNING_STORE_PASSWORD"; exit 1; }
+          key_store="$RUNNER_TEMP/dartsview-upload.jks"
+          printf '%s' "$ANDROID_SIGNING_KEYSTORE_BASE64" | base64 --decode > "$key_store"
+          test -s "$key_store" || { echo "::error::The upload keystore could not be decoded"; exit 1; }
+          chmod 600 "$key_store"
+          echo "AndroidSigningKeyStore=$key_store" >> "$GITHUB_ENV"
+      - name: Build signed Play Store bundle
+        env:
+          AndroidSigningKeyAlias: ${{ secrets.ANDROID_SIGNING_KEY_ALIAS }}
+          AndroidSigningKeyPass: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
+          AndroidSigningStorePass: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
+          AndroidKeyStore: "true"
+        run: |
+          set -euo pipefail
+          dotnet publish android/Dartsview.Android.csproj -c Release -f net10.0-android36.0 -p:PlayStoreBuild=true
+          bundle="$(find android/bin/Release/net10.0-android36.0 -type f -name '*.aab' -print -quit)"
+          test -n "$bundle" || { echo "::error::The signed Android App Bundle was not produced"; exit 1; }
+          cp "$bundle" Dartsview-playstore.aab
+      - name: Attach bundle to GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          name: Dartsview ${{ github.ref_name }} (Test)
+          name: Dartsview ${{ github.ref_name }} (Play Store)
           generate_release_notes: true
-          files: Dartsview-test.apk
+          files: Dartsview-playstore.aab
           body: |
-            Android test build signed with the default Android debug key.
-            This APK is not suitable for Play Store distribution or reliable in-place upgrades.
-            A private release signing key is required for permanent distribution.
+            Signed Android App Bundle for upload to Google Play.
+            The bundle uses the configured upload key; Google Play App Signing should remain enabled in Play Console.
+            This workflow creates the bundle but does not publish it to the Play Store.
