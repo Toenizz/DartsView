@@ -18,8 +18,6 @@
         </a>
         <div class="topbar-actions">
           <span class="timezone-label"><span class="status-dot"></span><span id="timezone-label">Ortszeit</span></span>
-          <button class="button button-quiet" id="load-file-button" type="button">Spielplan laden</button>
-          <input id="schedule-file" type="file" accept=".json,application/json" hidden>
         </div>
       </header>
 
@@ -56,15 +54,6 @@
             <strong class="status-value" id="stat-status">Keine Quelle</strong>
             <span class="stat-foot" id="stat-updated">Noch keine Daten geladen</span>
           </article>
-        </section>
-
-        <section class="notice" id="source-notice" aria-live="polite">
-          <span class="notice-icon" aria-hidden="true">i</span>
-          <div>
-            <strong id="notice-title">XMLTV-EPG wird geladen</strong>
-            <p id="notice-copy">Die Kalender und der EPG werden automatisch geladen und alle zwei Stunden aktualisiert.</p>
-          </div>
-          <button class="notice-action" id="configure-feed" type="button">Feed verbinden <span aria-hidden="true">↗</span></button>
         </section>
 
         <section class="schedule-section" id="schedule-panel" role="tabpanel" aria-labelledby="view-schedule" tabindex="0">
@@ -112,28 +101,8 @@
             <div class="empty-target" aria-hidden="true"><span></span><i></i></div>
             <p class="eyebrow">DEIN SPIELPLAN WARTET</p>
             <h3 id="empty-title">Noch keine bestätigten Spiele</h3>
-            <p id="empty-copy">Verbinde einen autorisierten EPG-Feed oder lade eine JSON-Datei. Termine, Übertragungsrechte und Länderzuordnungen werden nur aus der angegebenen Quelle übernommen.</p>
-            <button class="button button-primary" id="empty-load-button" type="button">JSON-Spielplan laden</button>
+            <p id="empty-copy">Die Daten werden automatisch geladen.</p>
           </div>
-        </section>
-
-        <section class="feed-panel" id="feed-panel" aria-labelledby="feed-heading" hidden>
-          <div class="feed-panel-heading">
-            <div>
-              <p class="eyebrow">DATENQUELLE</p>
-              <h2 id="feed-heading">Feed verbinden</h2>
-            </div>
-            <button class="icon-button" id="close-feed" type="button" aria-label="Einstellungen schließen">×</button>
-          </div>
-          <p>Der konfigurierte XMLTV-GZIP-Feed von deswird.org wird über den lokalen <code>/api/schedule</code>-Adapter abgerufen und ins Dartsview-Format umgewandelt. Die Quelle weist D/A/CH aus, nicht alle europäischen Länder. Alternativ kannst du einen JSON-Feed angeben; der Anbieter muss CORS für diesen Ursprung erlauben. Vorlage: <a href="schedule.template.json" target="_blank" rel="noreferrer">Dartsview-JSON-Format</a>.</p>
-          <form id="feed-form">
-            <label for="feed-url">Konfigurierter XMLTV-GZIP-Feed oder JSON-Feed-URL</label>
-            <div class="feed-form-row">
-              <input id="feed-url" type="url" placeholder="https://deswird.org/iptv/GuideFull.xml.gz oder JSON-Feed-URL" required>
-              <button class="button button-primary" type="submit">Verbinden</button>
-            </div>
-            <p class="feed-help" id="feed-message" role="status"></p>
-          </form>
         </section>
       </main>
 

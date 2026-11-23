@@ -10,21 +10,21 @@ Im Projektordner ausführen:
 dotnet run -- --urls http://localhost:5080
 ```
 
-Danach `http://localhost:5080` im Browser öffnen. Beim Laden der Seite ruft die App den XMLTV-GZIP-Feed und den zusätzlichen Turnierkalender automatisch ab. Der Server cached beide Quellen zwei Stunden; die App fragt sie ebenfalls alle zwei Stunden automatisch erneut ab. Eine manuelle Aktualisierung ist zusätzlich möglich.
+Danach `http://localhost:5080` im Browser öffnen. Beim Laden der Seite ruft die App die D/A/CH- und UK-XMLTV-GZIP-Feeds sowie den zusätzlichen Turnierkalender automatisch ab. Der Server cached jede Quelle zwei Stunden; die App fragt sie ebenfalls alle zwei Stunden automatisch erneut ab. Eine manuelle Aktualisierung ist zusätzlich möglich.
 
 ## EPG-Quelle und Abdeckung
 
-Die App verwendet `https://deswird.org/iptv/GuideFull.xml.gz` für TV-Sendungen. Die Quellseite beschreibt diesen Feed als D/A/CH-Guide; er weist keine vollständige Abdeckung aller europäischen Länder aus.
+Für D/A/CH-TV-Sendungen verwendet die App `https://deswird.org/iptv/GuideFull.xml.gz`. Die Quellseite beschreibt diesen Feed als D/A/CH-Guide; er weist keine vollständige Abdeckung aller europäischen Länder aus.
+
+Für englische Sender wird zusätzlich der UK1-XMLTV-Feed von [EPGSHARE01](https://epgshare01.online/epgshare01/epg_ripper_UK1.xml.gz) geladen. Seine Kanalliste enthält Free-TV und Pay-TV, darunter Sky Sports, TNT Sports und Premier Sports. Laut Anbieter ist der EPG für legale Nutzung vorgesehen; der Feed liefert Programmdaten, keine Streams. Die Abdeckung und Programminformationen können unvollständig sein.
 
 Zusätzlich liest der Server den Darts1.de-Kalender unter `https://www.darts1.de/termine/termine.php` für die dort aufgeführten PDC-, WDF-, DDV- und DSAB-Turniere. Im Dartskalender werden veröffentlichte Sessions und Runden unter anderem für die Players Championship Finals, die Lakeside-WDF-WM, die PDC-WM und die Bahrain Darts Masters ergänzt. Die zusätzlichen Kalenderdaten enthalten keine bestätigten Senderangaben. Diese Abdeckung entspricht dem veröffentlichten Darts1-Kalender und ist keine Garantie für jedes Darts-Turnier in Europa. Beide Quellen werden zwei Stunden zwischengespeichert.
 
+Sender aus beiden EPG-Feeds werden einem Turnier nur bei übereinstimmendem Turniernamen und Veranstaltungstag zugeordnet. Auf den Turnierkarten erscheinen Deutschland, Österreich, Schweiz und England/UK; „keine EPG-Angabe“ bedeutet, dass der jeweilige Feed für dieses Event und Gebiet keinen Sender nennt. Die App leitet daraus keine Übertragungsrechte oder zusätzliche Sender ab. Beide EPG-Feeds werden unabhängig geladen und zwischengespeichert, damit ein Feed-Ausfall den jeweils anderen nicht blockiert.
+
+Veröffentlichte Paarungen erscheinen direkt im 14-Tage-Spielplan. Bei jeder Paarung steht der Sessionbeginn (zum Beispiel „Session ab 13:45“); das ist nicht die bestätigte Anwurfzeit dieses einzelnen Spiels. Für noch nicht terminierte Paarungen bleibt die Anwurfzeit als offen markiert. Zeiten werden nicht geschätzt.
+
 Die App prüft keine Verbreitungsrechte der Sender. Angaben im EPG sind keine Bestätigung, dass ein Programm in jedem Gebiet empfangbar oder lizenziert ist.
-
-## JSON-Import und Datenformat
-
-Alternativ kann die App JSON über **Spielplan laden** importieren oder einen JSON-Endpunkt über **Feed verbinden** angeben. Das Format steht in [`wwwroot/schedule.template.json`](./wwwroot/schedule.template.json). `source` enthält Quelle, Abrufzeit und optional Abdeckung. Jedes Element in `events` benötigt ID, Turnier, Runde/Phase und Startzeit mit Zeitzone. `stop`, Veranstaltungsort, Stadt, Land, Paarung und Sender sind optional. Sender stehen in `broadcasts` und können nach Gebiet differenziert werden.
-
-Bei externen JSON-Feeds muss der Anbieter CORS-Anfragen erlauben. Die App speichert die Feed-URL lokal im Browser; importierte Dateien werden nicht hochgeladen.
 
 ## Android-Test-APK
 

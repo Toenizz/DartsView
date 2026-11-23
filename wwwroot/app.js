@@ -6,14 +6,28 @@ const dateFormat = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-
 const weekdayFormat = new Intl.DateTimeFormat('de-DE', { weekday: 'long', day: '2-digit', month: 'long' });
 const timeFormat = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: localTimeZone });
 const dateTimeFormat = new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium', timeStyle: 'short', timeZone: localTimeZone });
+const eventDateFormat = new Intl.DateTimeFormat('en-CA', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  timeZone: localTimeZone
+});
+const broadcastRegions = [
+  { label: 'Deutschland', territories: ['Deutschland'] },
+  { label: 'Österreich', territories: ['Österreich'] },
+  { label: 'Schweiz', territories: ['Schweiz'] },
+  { label: 'England/UK', territories: ['England', 'UK', 'United Kingdom', 'Vereinigtes Königreich'] }
+];
 const storedFeedUrl = localStorage.getItem('dartsview-feed-url') || '';
 const localApiUrl = location.protocol === 'http:' || location.protocol === 'https:' ? '/api/schedule' : '';
 const xmltvFeedUrl = 'https://deswird.org/iptv/GuideFull.xml.gz';
 
 const state = {
   events: [],
+  ukEvents: [],
   tournamentEvents: [],
   source: null,
+  ukSource: null,
   tournamentSource: null,
   search: '',
   country: '',
@@ -21,6 +35,7 @@ const state = {
   activeTab: 'schedule',
   feedUrl: storedFeedUrl || localApiUrl,
   refreshError: '',
+  ukError: '',
   tournamentError: ''
 };
 
@@ -39,9 +54,6 @@ const elements = {
   statTournaments: document.querySelector('#stat-tournaments'),
   statStatus: document.querySelector('#stat-status'),
   statUpdated: document.querySelector('#stat-updated'),
-  notice: document.querySelector('#source-notice'),
-  noticeTitle: document.querySelector('#notice-title'),
-  noticeCopy: document.querySelector('#notice-copy'),
   search: document.querySelector('#search-input'),
   country: document.querySelector('#country-filter'),
   tournament: document.querySelector('#tournament-filter'),
@@ -50,12 +62,7 @@ const elements = {
   list: document.querySelector('#schedule-list'),
   empty: document.querySelector('#empty-state'),
   emptyTitle: document.querySelector('#empty-title'),
-  emptyCopy: document.querySelector('#empty-copy'),
-  file: document.querySelector('#schedule-file'),
-  feedPanel: document.querySelector('#feed-panel'),
-  feedUrl: document.querySelector('#feed-url'),
-  feedMessage: document.querySelector('#feed-message'),
-  configureFeed: document.querySelector('#configure-feed')
+  emptyCopy: document.querySelector('#empty-copy')
 };
 
 function setPeriod() {
@@ -97,10 +104,6 @@ function getFeedRequestUrl(url) {
   return localApiUrl;
 }
 
-function getFeedDisplayUrl(url) {
-  return localApiUrl && url === localApiUrl ? xmltvFeedUrl : url;
-}
-
 function validateSchedule(payload) {
   if (!payload || typeof payload !== 'object' || !Array.isArray(payload.events)) {
     throw new Error('Das JSON muss ein Objekt mit einem events-Array enthalten.');
@@ -131,6 +134,17 @@ function validateSchedule(payload) {
       throw new Error(`Eintrag ${index + 1}: „broadcasts“ muss eine Liste aus Gebiet und Sender sein.`);
     }
 
+    const matches = event.matches ?? [];
+    if (!Array.isArray(matches) || matches.some(match =>
+      !match ||
+      typeof match.player1 !== 'string' ||
+      !match.player1.trim() ||
+      typeof match.player2 !== 'string' ||
+      !match.player2.trim()
+    )) {
+      throw new Error(`Eintrag ${index + 1}: „matches“ muss gültige Spielerpaarungen enthalten.`);
+    }
+
     const stop = event.stop ? new Date(event.stop) : null;
     if (stop && Number.isNaN(stop.getTime())) {
       throw new Error(`Eintrag ${index + 1}: „stop“ ist kein gültiges Datum.`);
@@ -147,6 +161,11 @@ function validateSchedule(payload) {
       title: typeof event.title === 'string' ? event.title : '',
       kind: typeof event.kind === 'string' ? event.kind : 'broadcast',
       allDay: event.allDay === true,
+      matches: matches.map(match => ({
+        player1: match.player1.trim(),
+        player2: match.player2.trim()
+      })),
+      timingNote: typeof event.timingNote === 'string' ? event.timingNote : '',
       sourceUrl: safeUrl(event.sourceUrl),
       broadcasts: broadcasts.map(item => ({
         territory: item.territory.trim(),
@@ -170,7 +189,67 @@ function validateSchedule(payload) {
 }
 
 function getAllEvents() {
-  return [...state.events, ...state.tournamentEvents];
+  return [...getEpgEvents(), ...state.tournamentEvents];
+}
+
+function getEpgEvents() {
+  return [...state.events, ...state.ukEvents];
+}
+
+function getLocalDateKey(date) {
+  const parts = eventDateFormat.formatToParts(date);
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function normalizeTournamentName(value) {
+  return value
+    .toLocaleLowerCase('de')
+    .replace(/\b(?:pdc|wdf|ddv|dsab|darts?)\b/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function matchesTournamentEvent(broadcastEvent, event) {
+  const broadcastName = normalizeTournamentName(broadcastEvent.tournament);
+  const eventName = normalizeTournamentName(event.tournament);
+  if (!broadcastName || !eventName ||
+      !(broadcastName === eventName || broadcastName.includes(eventName) || eventName.includes(broadcastName))) {
+    return false;
+  }
+
+  const firstDay = getLocalDateKey(event.start);
+  const lastDay = event.stop
+    ? getLocalDateKey(new Date(event.stop.getTime() - 1))
+    : firstDay;
+  const broadcastDay = getLocalDateKey(broadcastEvent.start);
+  return broadcastDay >= firstDay && broadcastDay <= lastDay;
+}
+
+function getEventBroadcasts(event) {
+  const broadcasts = [...event.broadcasts];
+  if (event.kind !== 'broadcast') {
+    for (const broadcastEvent of getEpgEvents()) {
+      if (broadcastEvent.id !== event.id && matchesTournamentEvent(broadcastEvent, event)) {
+        broadcasts.push(...broadcastEvent.broadcasts);
+      }
+    }
+  }
+
+  const unique = new Map();
+  for (const broadcast of broadcasts) {
+    const key = `${broadcast.territory.toLocaleLowerCase('de')}|${broadcast.channel.toLocaleLowerCase('de')}`;
+    if (!unique.has(key) || (!unique.get(key).url && broadcast.url)) {
+      unique.set(key, broadcast);
+    }
+  }
+  return [...unique.values()];
+}
+
+function displayTerritory(territory) {
+  return ['England', 'UK', 'United Kingdom', 'Vereinigtes Königreich'].includes(territory)
+    ? 'England/UK'
+    : territory;
 }
 
 function isInRange(event) {
@@ -190,13 +269,15 @@ function isInRange(event) {
 function getVisibleEvents(eventPool = getAllEvents().filter(isInRange)) {
   const query = state.search.trim().toLocaleLowerCase('de');
   return eventPool
-    .filter(event => state.activeTab === 'calendar' || !state.country || event.broadcasts.some(item => item.territory === state.country))
+    .filter(event => state.activeTab === 'calendar' || !state.country || getEventBroadcasts(event).some(item => item.territory === state.country))
     .filter(event => !state.tournament || event.tournament === state.tournament)
     .filter(event => {
       if (!query) return true;
       const searchable = [
         event.tournament, event.stage, event.venue, event.city, event.country,
-        event.participants, ...event.broadcasts.flatMap(item => [item.channel, item.territory])
+        event.participants,
+        ...event.matches.flatMap(match => [match.player1, match.player2]),
+        ...getEventBroadcasts(event).flatMap(item => [item.channel, item.territory])
       ].join(' ').toLocaleLowerCase('de');
       return searchable.includes(query);
     })
@@ -210,24 +291,37 @@ function makeElement(tag, className, text) {
   return element;
 }
 
-function makeBroadcasts(broadcasts) {
+function makeBroadcasts(event) {
   const container = makeElement('div', 'event-broadcasts');
-  if (!broadcasts.length) {
-    container.append(makeElement('span', 'event-stage-value', 'Kein TV-EPG · Darts1.de'));
-    return container;
+  const broadcasts = getEventBroadcasts(event);
+  const displayedTerritories = new Set();
+  for (const region of broadcastRegions) {
+    const regionalBroadcasts = broadcasts.filter(item => region.territories.includes(item.territory));
+    for (const territory of region.territories) displayedTerritories.add(territory);
+    if (!regionalBroadcasts.length) {
+      const chip = makeElement('span', 'broadcast-chip broadcast-chip--unknown', `${region.label}: keine EPG-Angabe`);
+      chip.title = `Für ${region.label} enthält das EPG zu diesem Event keine Senderangabe.`;
+      container.append(chip);
+      continue;
+    }
+
+    for (const broadcast of regionalBroadcasts) {
+      const label = `${region.label}: ${broadcast.channel}`;
+      if (broadcast.url) {
+        const link = makeElement('a', 'broadcast-chip', label);
+        link.href = broadcast.url;
+        link.target = '_blank';
+        link.rel = 'noreferrer';
+        container.append(link);
+      } else {
+        container.append(makeElement('span', 'broadcast-chip', label));
+      }
+    }
   }
 
   for (const broadcast of broadcasts) {
-    const label = `${broadcast.territory}: ${broadcast.channel}`;
-    if (broadcast.url) {
-      const link = makeElement('a', 'broadcast-chip', label);
-      link.href = broadcast.url;
-      link.target = '_blank';
-      link.rel = 'noreferrer';
-      container.append(link);
-    } else {
-      container.append(makeElement('span', 'broadcast-chip', label));
-    }
+    if (displayedTerritories.has(broadcast.territory)) continue;
+    container.append(makeElement('span', 'broadcast-chip', `${broadcast.territory}: ${broadcast.channel}`));
   }
   return container;
 }
@@ -235,13 +329,39 @@ function makeBroadcasts(broadcasts) {
 function makeEventCard(event) {
   const card = makeElement('article', 'event-card');
   const time = makeElement('div', 'event-time');
-  time.append(makeElement('strong', '', event.allDay ? 'Ganztägig' : timeFormat.format(event.start)));
-  time.append(makeElement('span', '', event.allDay ? 'Turnierzeitraum' : localTimeZone.replaceAll('_', ' ')));
+  time.append(makeElement('strong', '', event.kind === 'draw'
+    ? 'Offen'
+    : event.allDay ? 'Ganztägig' : timeFormat.format(event.start)));
+  time.append(makeElement('span', '', event.kind === 'draw'
+    ? 'Spielzeit'
+    : event.kind === 'session' ? 'Sessionbeginn' : event.allDay ? 'Turnierzeitraum' : localTimeZone.replaceAll('_', ' ')));
 
   const title = makeElement('div', 'event-title');
   title.append(makeElement('strong', '', event.title || event.tournament));
-  title.append(makeElement('span', '', event.participants || 'Spielpaarung noch nicht veröffentlicht'));
-  title.append(makeBroadcasts(event.broadcasts));
+  if (event.matches.length) {
+    const matchList = makeElement('ul', 'event-match-list');
+    for (const match of event.matches) {
+      const item = makeElement('li', 'event-match');
+      item.append(
+        makeElement('span', '', match.player1),
+        makeElement('span', 'event-match-separator', 'vs'),
+        makeElement('span', '', match.player2),
+        makeElement('span', 'event-match-time', event.kind === 'draw'
+          ? 'Anwurfzeit offen'
+          : `Session ab ${timeFormat.format(event.start)}`)
+      );
+      matchList.append(item);
+    }
+    title.append(matchList);
+    if (event.timingNote) {
+      title.append(makeElement('span', 'event-match-note', event.timingNote));
+    }
+  } else {
+    title.append(makeElement('span', '', event.kind === 'tournament'
+      ? 'Paarungen noch nicht veröffentlicht'
+      : event.participants || 'Spielpaarung noch nicht veröffentlicht'));
+  }
+  title.append(makeBroadcasts(event));
 
   const stage = makeElement('div', 'event-stage');
   stage.append(makeElement('label', '', 'Runde / Phase'));
@@ -307,74 +427,41 @@ function render() {
     ? (filtersActive
       ? 'Für den gewählten Zeitraum und die aktiven Filter gibt es keine Einträge. Setze die Filter zurück oder lade einen aktuelleren Spielplan.'
       : `Die geladene Quelle enthält keine Termine in den kommenden ${periodName}.`)
-    : 'Verbinde einen autorisierten EPG-Feed oder lade eine JSON-Datei. Termine, Übertragungsrechte und Länderzuordnungen werden nur aus der angegebenen Quelle übernommen.';
+    : 'Die Daten werden automatisch geladen.';
   elements.reset.disabled = !state.search && !state.country && !state.tournament;
 
   updateSourceStatus();
 }
 
 function updateSourceStatus() {
-  if (!state.source) {
-    const tournamentRetrieved = state.tournamentSource?.retrievedAt;
-    const tournamentFreshness = tournamentRetrieved && !Number.isNaN(tournamentRetrieved.getTime())
-      ? dateTimeFormat.format(tournamentRetrieved)
-      : 'Zeitpunkt nicht angegeben';
-    elements.statStatus.textContent = state.tournamentSource
-      ? (state.refreshError ? 'Teilweise' : 'Kalender geladen')
-      : 'Keine Quelle';
-    elements.statStatus.style.color = state.tournamentSource ? 'var(--lime)' : '';
-    elements.statUpdated.textContent = state.tournamentSource
-      ? `Stand: ${tournamentFreshness}`
-      : 'Noch keine Daten geladen';
-    elements.noticeTitle.textContent = state.tournamentSource
-      ? (state.refreshError ? 'Turnierkalender geladen · EPG-Fehler' : `${state.tournamentSource.name} · Daten geladen`)
-      : (state.refreshError ? 'EPG-Feed konnte nicht geladen werden' : 'Noch keine EPG-Datenquelle verbunden');
-    elements.noticeCopy.textContent = state.tournamentSource
-      ? `Quelle: ${state.tournamentSource.url}. Abgerufen: ${tournamentFreshness}. ${state.refreshError ? `${state.refreshError} ` : ''}Zusätzliche Turniertermine enthalten keine TV-Senderangaben. Automatische Aktualisierung alle zwei Stunden.`
-      : (state.refreshError
-        ? `${state.refreshError} Prüfe, ob der lokale Server und die Datenquelle erreichbar sind. Automatische Aktualisierung alle zwei Stunden.`
-        : 'Lade einen Spielplan als JSON oder verbinde unten einen JSON-Feed. Die Quellen werden beim Öffnen geladen und alle zwei Stunden aktualisiert.');
-    if (!state.tournamentSource && state.tournamentError) {
-      elements.noticeCopy.textContent += ` ${state.tournamentError}`;
-    }
-    elements.configureFeed.replaceChildren(document.createTextNode(state.feedUrl ? 'Erneut versuchen ' : 'Feed verbinden '), makeElement('span', '', '↗'));
-    return;
-  }
-
-  const retrievedAt = state.source.retrievedAt;
+  const retrievedAt = state.source?.retrievedAt || state.ukSource?.retrievedAt || state.tournamentSource?.retrievedAt;
   const freshness = retrievedAt && !Number.isNaN(retrievedAt.getTime())
     ? dateTimeFormat.format(retrievedAt)
     : 'Zeitpunkt nicht angegeben';
-  elements.statStatus.textContent = state.refreshError ? 'Feed-Fehler' : 'Verbunden';
-  elements.statStatus.style.color = state.refreshError ? 'var(--orange)' : 'var(--lime)';
-  elements.statUpdated.textContent = `${state.refreshError ? 'Letzter Stand' : 'Stand'}: ${freshness}`;
-  elements.noticeTitle.textContent = state.refreshError
-    ? `${state.source.name} · Aktualisierung fehlgeschlagen`
-    : `${state.source.name} · Daten geladen`;
-  const rightsReviewed = state.source.rightsReviewedAt && !Number.isNaN(state.source.rightsReviewedAt.getTime())
-    ? ` Rechte geprüft: ${dateTimeFormat.format(state.source.rightsReviewedAt)}.`
-    : '';
-  elements.noticeCopy.textContent = state.refreshError
-    ? `${state.refreshError} Angezeigt wird der letzte erfolgreiche Stand vom ${freshness}.`
-    : `Quelle: ${state.source.url || 'lokale JSON-Datei'}. Abgerufen: ${freshness}.${state.source.scope ? ` Abdeckung: ${state.source.scope}.` : ''}${rightsReviewed} Feed-Angaben sind keine Bestätigung von Senderrechten.`;
-  elements.noticeCopy.textContent += ' Automatische Aktualisierung alle zwei Stunden.';
-  if (state.tournamentSource) {
-    elements.noticeCopy.textContent += ` Zusatztermine: ${state.tournamentSource.name}.`;
-  } else if (state.tournamentError) {
-    elements.noticeCopy.textContent += ` ${state.tournamentError}`;
-  }
-  elements.configureFeed.replaceChildren(document.createTextNode(state.feedUrl ? 'Jetzt aktualisieren ' : 'Feed verbinden '), makeElement('span', '', state.feedUrl ? '↻' : '↗'));
+  const errors = [
+    state.refreshError && `D/A/CH-EPG: ${state.refreshError}`,
+    state.ukError && `UK-EPG: ${state.ukError}`,
+    state.tournamentError && `Turnierkalender: ${state.tournamentError}`
+  ].filter(Boolean);
+  const hasSource = Boolean(state.source || state.ukSource || state.tournamentSource);
+  elements.statStatus.textContent = errors.length
+    ? (hasSource ? 'Teilweise' : 'Fehler')
+    : state.source || state.ukSource ? 'Verbunden' : state.tournamentSource ? 'Kalender geladen' : 'Keine Quelle';
+  elements.statStatus.style.color = errors.length ? 'var(--orange)' : hasSource ? 'var(--lime)' : '';
+  elements.statUpdated.textContent = errors.length
+    ? errors.join(' · ')
+    : hasSource ? `Stand: ${freshness}` : 'Noch keine Daten geladen';
 }
 
 function updateFilters() {
   const currentCountry = elements.country.value;
   const allEvents = getAllEvents().filter(isInRange);
-  const dachCountries = ['Deutschland', 'Österreich', 'Schweiz', 'United Kingdom'];
-  const countries = [...new Set(allEvents.flatMap(event => event.broadcasts.map(item => item.territory)))]
+  const dachCountries = ['Deutschland', 'Österreich', 'Schweiz', 'England', 'UK', 'United Kingdom', 'Vereinigtes Königreich'];
+  const countries = [...new Set(allEvents.flatMap(event => getEventBroadcasts(event).map(item => item.territory)))]
     .filter(c => dachCountries.includes(c))
     .sort();
   elements.country.replaceChildren(new Option('Alle Länder', ''));
-  for (const country of countries) elements.country.add(new Option(country, country));
+  for (const country of countries) elements.country.add(new Option(displayTerritory(country), country));
   elements.country.value = countries.includes(currentCountry) ? currentCountry : '';
   elements.country.disabled = state.activeTab === 'calendar' || countries.length === 0;
 
@@ -404,11 +491,6 @@ function setActiveTab(tab) {
   render();
 }
 
-function showFeedMessage(message, isError = false) {
-  elements.feedMessage.textContent = message;
-  elements.feedMessage.classList.toggle('is-error', isError);
-}
-
 async function loadPayload(payload) {
   const result = validateSchedule(payload);
   state.events = result.events;
@@ -433,8 +515,22 @@ async function loadTournamentEvents() {
   render();
 }
 
+async function loadUkSchedule() {
+  try {
+    const response = await fetch('/api/schedule-uk', { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`UK-EPG: HTTP ${response.status}.`);
+    const result = validateSchedule(await response.json());
+    state.ukEvents = result.events;
+    state.ukSource = result.source;
+    state.ukError = '';
+  } catch (error) {
+    state.ukError = error instanceof Error ? error.message : 'Der UK-EPG konnte nicht geladen werden.';
+  }
+  updateFilters();
+  render();
+}
+
 async function loadFeed(url) {
-  showFeedMessage('Verbinde mit der Datenquelle …');
   try {
     const requestUrl = getFeedRequestUrl(url);
     const response = await fetch(requestUrl, { headers: { Accept: 'application/json' } });
@@ -443,29 +539,20 @@ async function loadFeed(url) {
     state.source.url = safeUrl(requestUrl) || state.source.url;
     state.feedUrl = url;
     localStorage.setItem('dartsview-feed-url', url);
-    elements.feedUrl.value = getFeedDisplayUrl(url);
     render();
-    showFeedMessage(`${state.events.length} Einträge${requestUrl !== url ? ' über den lokalen XMLTV-Adapter' : ''} erfolgreich geladen.`);
   } catch (error) {
     state.refreshError = error instanceof Error ? error.message : 'Der Feed konnte nicht geladen werden.';
-    showFeedMessage(state.refreshError, true);
     render();
   }
-}
-
-function openFilePicker() {
-  elements.file.click();
 }
 
 function init() {
   setPeriod();
-  elements.feedUrl.value = getFeedDisplayUrl(state.feedUrl);
   if (location.protocol === 'http:' || location.protocol === 'https:') {
+    loadUkSchedule();
     loadTournamentEvents();
   }
   if (state.feedUrl) {
-    elements.noticeTitle.textContent = 'XMLTV-EPG wird geladen';
-    elements.noticeCopy.textContent = 'Der Spielplan und die EPG-Sendungen werden automatisch geladen und alle zwei Stunden aktualisiert.';
     loadFeed(state.feedUrl);
   }
 
@@ -490,55 +577,18 @@ function init() {
     elements.tournament.value = '';
     render();
   });
-  document.querySelector('#load-file-button').addEventListener('click', openFilePicker);
-  document.querySelector('#empty-load-button').addEventListener('click', openFilePicker);
   elements.viewSchedule.addEventListener('click', () => setActiveTab('schedule'));
   elements.viewCalendar.addEventListener('click', () => setActiveTab('calendar'));
-  elements.file.addEventListener('change', async () => {
-    const file = elements.file.files && elements.file.files[0];
-    if (!file) return;
-    try {
-      await loadPayload(JSON.parse(await file.text()));
-      state.feedUrl = '';
-      showFeedMessage(`${file.name}: ${state.events.length} Einträge geladen.`);
-      elements.feedPanel.hidden = false;
-      elements.feedUrl.value = '';
-      localStorage.removeItem('dartsview-feed-url');
-    } catch (error) {
-      elements.feedPanel.hidden = false;
-      showFeedMessage(error instanceof Error ? error.message : 'Die Datei konnte nicht gelesen werden.', true);
-    } finally {
-      elements.file.value = '';
-    }
-  });
-  document.querySelector('#configure-feed').addEventListener('click', () => {
-    if (state.feedUrl) {
-      loadFeed(state.feedUrl);
-      return;
-    }
-    elements.feedPanel.hidden = false;
-    elements.feedPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    elements.feedUrl.focus();
-  });
-  document.querySelector('#close-feed').addEventListener('click', () => {
-    elements.feedPanel.hidden = true;
-  });
-  document.querySelector('#feed-form').addEventListener('submit', event => {
-    event.preventDefault();
-    const url = safeUrl(elements.feedUrl.value);
-    if (!url) {
-      showFeedMessage('Bitte eine gültige HTTP- oder HTTPS-URL eingeben.', true);
-      return;
-    }
-    loadFeed(url);
-  });
 
   updateFilters();
   render();
   window.setInterval(() => {
     setPeriod();
     if (state.feedUrl) loadFeed(state.feedUrl);
-    if (location.protocol === 'http:' || location.protocol === 'https:') loadTournamentEvents();
+    if (location.protocol === 'http:' || location.protocol === 'https:') {
+      loadUkSchedule();
+      loadTournamentEvents();
+    }
   }, 2 * 60 * 60 * 1000);
 }
 

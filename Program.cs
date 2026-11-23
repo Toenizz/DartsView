@@ -19,6 +19,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 var refreshLock = new SemaphoreSlim(1, 1);
+var ukRefreshLock = new SemaphoreSlim(1, 1);
 var tournamentRefreshLock = new SemaphoreSlim(1, 1);
 app.MapGet("/api/schedule", async (IMemoryCache cache, CancellationToken cancellationToken) =>
 {
@@ -62,6 +63,51 @@ app.MapGet("/api/schedule", async (IMemoryCache cache, CancellationToken cancell
     finally
     {
         refreshLock.Release();
+    }
+});
+
+app.MapGet("/api/schedule-uk", async (IMemoryCache cache, CancellationToken cancellationToken) =>
+{
+    if (cache.TryGetValue("xmltv-schedule-uk", out DartsSchedule? cached) && cached is not null)
+    {
+        return Results.Ok(cached);
+    }
+
+    await ukRefreshLock.WaitAsync(cancellationToken);
+    try
+    {
+        if (cache.TryGetValue("xmltv-schedule-uk", out cached) && cached is not null)
+        {
+            return Results.Ok(cached);
+        }
+
+        var schedule = await XmltvFeed.LoadUkAsync(cancellationToken);
+        cache.Set("xmltv-schedule-uk", schedule, TimeSpan.FromHours(2));
+        return Results.Ok(schedule);
+    }
+    catch (HttpRequestException exception)
+    {
+        app.Logger.LogError(exception, "The UK XMLTV source could not be reached.");
+        return Results.Problem("Die UK-XMLTV-Quelle ist nicht erreichbar.", statusCode: (int)HttpStatusCode.BadGateway);
+    }
+    catch (TaskCanceledException exception) when (!cancellationToken.IsCancellationRequested)
+    {
+        app.Logger.LogError(exception, "The UK XMLTV source request timed out.");
+        return Results.Problem("Der Abruf der UK-XMLTV-Quelle hat zu lange gedauert.", statusCode: (int)HttpStatusCode.GatewayTimeout);
+    }
+    catch (InvalidDataException exception)
+    {
+        app.Logger.LogError(exception, "The UK XMLTV source returned invalid compressed data.");
+        return Results.Problem("Die UK-XMLTV-Datei ist ungültig oder zu groß.", statusCode: (int)HttpStatusCode.BadGateway);
+    }
+    catch (XmlException exception)
+    {
+        app.Logger.LogError(exception, "The UK XMLTV document could not be parsed.");
+        return Results.Problem("Das UK-XMLTV-Dokument konnte nicht gelesen werden.", statusCode: (int)HttpStatusCode.BadGateway);
+    }
+    finally
+    {
+        ukRefreshLock.Release();
     }
 });
 
@@ -124,8 +170,11 @@ internal sealed record EpgEvent(
     string SourceUrl,
     string Title,
     string Kind = "broadcast",
-    bool AllDay = false);
+    bool AllDay = false,
+    IReadOnlyList<DartsMatch>? Matches = null,
+    string TimingNote = "");
 internal sealed record EpgBroadcast(string Territory, string Channel, string Url);
+internal sealed record DartsMatch(string Player1, string Player2);
 
 internal static class Darts1Feed
 {
@@ -151,11 +200,44 @@ internal static class Darts1Feed
 
         var now = DateTimeOffset.UtcNow;
         var rangeEnd = now.AddMonths(2);
+        var playersSessions = ParseSessions(await playersTask, PlayersChampionshipUrl, "PDC Players Championship Finals", "Butlin's Minehead Arena", "Minehead", "England", "Europe/London", now, rangeEnd);
         var events = ParseCalendar(await calendarTask, now, rangeEnd)
-            .Concat(ParseSessions(await playersTask, PlayersChampionshipUrl, "PDC Players Championship Finals", "Butlin's Minehead Arena", "Minehead", "England", "Europe/London", now, rangeEnd))
+            .Concat(playersSessions)
             .Concat(ParseSessions(await lakesideTask, LakesideUrl, "WDF Dart-WM", "Lakeside Country Club", "Frimley Green", "England", "Europe/London", now, rangeEnd))
             .Concat(ParseSessions(await pdcWorldTask, PdcWorldChampionshipUrl, "PDC Darts-WM", "Alexandra Palace", "London", "England", "Europe/London", now, rangeEnd))
-            .Concat(ParseSessions(await bahrainTask, BahrainDartsMastersUrl, "PDC Bahrain Darts Masters", "Bahrain International Circuit", "Bahrain", "Bahrain", "Asia/Bahrain", now, rangeEnd))
+            .Concat(ParseSessions(await bahrainTask, BahrainDartsMastersUrl, "PDC Bahrain Darts Masters", "Bahrain International Circuit", "Bahrain", "Bahrain", "Asia/Bahrain", now, rangeEnd));
+
+        var drawnMatches = ParsePlayersChampionshipDraw(await playersTask);
+        var scheduledMatchKeys = playersSessions
+            .SelectMany(session => session.Matches ?? Array.Empty<DartsMatch>())
+            .Select(MatchKey)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var unassignedMatches = drawnMatches
+            .Where(match => !scheduledMatchKeys.Contains(MatchKey(match)))
+            .ToArray();
+        if (unassignedMatches.Length > 0 && playersSessions.Count > 0)
+        {
+            var firstSession = playersSessions[0];
+            events = events.Append(new EpgEvent(
+                CreateId($"draw|{PlayersChampionshipUrl}|{firstSession.Start}"),
+                firstSession.Tournament,
+                "Erstrundenauslosung",
+                firstSession.Start,
+                string.Empty,
+                firstSession.Venue,
+                firstSession.City,
+                firstSession.Country,
+                string.Empty,
+                Array.Empty<EpgBroadcast>(),
+                PlayersChampionshipUrl,
+                firstSession.Tournament,
+                "draw",
+                false,
+                unassignedMatches,
+                "Die Paarungen sind noch keiner Session zugeordnet; individuelle Anwurfzeiten sind nicht veröffentlicht."));
+        }
+
+        var orderedEvents = events
             .DistinctBy(item => item.Id)
             .OrderBy(item => item.Start, StringComparer.Ordinal)
             .ToArray();
@@ -166,7 +248,7 @@ internal static class Darts1Feed
                 CalendarUrl,
                 DateTimeOffset.UtcNow.ToString("O", CultureInfo.InvariantCulture),
                 "Turniertermine der nächsten zwei Monate und veröffentlichte Sessions; TV-Sender werden nicht ausgewiesen"),
-            events);
+            orderedEvents);
     }
 
     private static async Task<string> GetPageAsync(string url, CancellationToken cancellationToken)
@@ -301,7 +383,7 @@ internal static class Darts1Feed
                     entry.Venue,
                     LastLocationPart(entry.Venue),
                     string.Empty,
-                    "Turnierkalender · Darts1.de",
+                    string.Empty,
                     Array.Empty<EpgBroadcast>(),
                     entry.SourceUrl,
                     entry.Title,
@@ -324,8 +406,9 @@ internal static class Darts1Feed
     {
         var sessions = new List<EpgEvent>();
         var items = Regex.Matches(html, "<p class=\"event\"[^>]*>(?<content>.*?)</p>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-        foreach (Match item in items)
+        for (var index = 0; index < items.Count; index++)
         {
+            var item = items[index];
             var content = item.Groups["content"].Value;
             var startMatch = Regex.Match(content, "<time[^>]*itemprop=\"startDate\"[^>]*datetime=\"(?<start>[^\"]+)\"", RegexOptions.IgnoreCase);
             var stageMatch = Regex.Match(content, "<span[^>]*itemprop=\"name\"[^>]*>(?<stage>.*?)</span>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -343,6 +426,15 @@ internal static class Darts1Feed
             }
 
             var stage = PlainText(stageMatch.Groups["stage"].Value);
+            var detailsStart = item.Index + item.Length;
+            var detailsEnd = index + 1 < items.Count ? items[index + 1].Index : html.Length;
+            var nextHeading = html.IndexOf("<h2", detailsStart, StringComparison.OrdinalIgnoreCase);
+            if (nextHeading >= 0 && nextHeading < detailsEnd)
+            {
+                detailsEnd = nextHeading;
+            }
+
+            var matches = ParseMatchups(html[detailsStart..detailsEnd]);
             sessions.Add(new EpgEvent(
                 CreateId($"session|{tournament}|{start:O}|{stage}"),
                 tournament,
@@ -352,11 +444,15 @@ internal static class Darts1Feed
                 venue,
                 city,
                 country,
-                "Session · Darts1.de",
+                string.Empty,
                 Array.Empty<EpgBroadcast>(),
                 pageUrl,
                 tournament,
-                "session"));
+                "session",
+                Matches: matches,
+                TimingNote: matches.Count > 0
+                    ? "Individuelle Anwurfzeiten sind nicht veröffentlicht; die Zeit oben ist der Sessionbeginn."
+                    : string.Empty));
         }
 
         var datedSections = Regex.Matches(
@@ -413,6 +509,61 @@ internal static class Darts1Feed
         return sessions.DistinctBy(session => session.Id).ToArray();
     }
 
+    private static IReadOnlyList<DartsMatch> ParsePlayersChampionshipDraw(string html)
+    {
+        var drawHeading = html.IndexOf("Teilnehmer & Auslosung", StringComparison.OrdinalIgnoreCase);
+        if (drawHeading < 0)
+        {
+            return Array.Empty<DartsMatch>();
+        }
+
+        var scheduleHeading = html.IndexOf("Players Championship Finals Spielplan", drawHeading, StringComparison.OrdinalIgnoreCase);
+        return scheduleHeading < 0
+            ? Array.Empty<DartsMatch>()
+            : ParseMatchups(html[drawHeading..scheduleHeading]);
+    }
+
+    private static IReadOnlyList<DartsMatch> ParseMatchups(string html)
+    {
+        var matches = new List<DartsMatch>();
+        var tables = Regex.Matches(
+            html,
+            "<table\\b[^>]*class=\"spielplan\"[^>]*>(?<content>.*?)</table>",
+            RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+        foreach (Match table in tables)
+        {
+            var rows = Regex.Matches(table.Groups["content"].Value, "<tr\\b[^>]*>(?<content>.*?)</tr>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            foreach (Match row in rows)
+            {
+                var cells = Regex.Matches(row.Groups["content"].Value, "<td\\b[^>]*>(?<content>.*?)</td>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (cells.Count != 3 ||
+                    !string.Equals(PlainText(cells[1].Groups["content"].Value), "v", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var player1 = PlainText(cells[0].Groups["content"].Value);
+                var player2 = PlainText(cells[2].Groups["content"].Value);
+                if (!string.IsNullOrWhiteSpace(player1) && !string.IsNullOrWhiteSpace(player2))
+                {
+                    matches.Add(new DartsMatch(player1, player2));
+                }
+            }
+        }
+
+        return matches;
+    }
+
+    private static string MatchKey(DartsMatch match)
+    {
+        var player1 = match.Player1.Trim();
+        var player2 = match.Player2.Trim();
+        return string.Compare(player1, player2, StringComparison.OrdinalIgnoreCase) <= 0
+            ? $"{player1}|{player2}"
+            : $"{player2}|{player1}";
+    }
+
     private static DateTimeOffset ToVenueTime(DateTime localTime, string timeZoneId)
     {
         var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
@@ -441,7 +592,9 @@ internal static class Darts1Feed
 internal sealed class XmltvFeed
 {
     private const string FeedUrl = "https://deswird.org/iptv/GuideFull.xml.gz";
+    private const string UkFeedUrl = "https://epgshare01.online/epgshare01/epg_ripper_UK1.xml.gz";
     private const int MaxCompressedBytes = 32 * 1024 * 1024;
+    private const int MaxUkCompressedBytes = 4 * 1024 * 1024;
     private const long MaxXmlCharacters = 512_000_000;
     private static readonly HttpClient Client = new(new HttpClientHandler
     {
@@ -451,15 +604,36 @@ internal sealed class XmltvFeed
         Timeout = TimeSpan.FromSeconds(90)
     };
 
-    public static async Task<DartsSchedule> LoadAsync(CancellationToken cancellationToken)
+    public static Task<DartsSchedule> LoadAsync(CancellationToken cancellationToken) =>
+        LoadFeedAsync(
+            FeedUrl,
+            "deswird.org XMLTV · GuideFull",
+            "D/A/CH laut Quelle; weitere europäische Gebiete sind in diesem Feed nicht ausgewiesen",
+            MaxCompressedBytes,
+            cancellationToken);
+
+    public static Task<DartsSchedule> LoadUkAsync(CancellationToken cancellationToken) =>
+        LoadFeedAsync(
+            UkFeedUrl,
+            "EPGSHARE01 XMLTV · UK1",
+            "Vereinigtes Königreich; Free-TV- und Pay-TV-Kanäle laut UK1-Kanalliste",
+            MaxUkCompressedBytes,
+            cancellationToken);
+
+    private static async Task<DartsSchedule> LoadFeedAsync(
+        string feedUrl,
+        string sourceName,
+        string scope,
+        int maxCompressedBytes,
+        CancellationToken cancellationToken)
     {
         using var response = await Client.GetAsync(
-            FeedUrl,
+            feedUrl,
             HttpCompletionOption.ResponseHeadersRead,
             cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        if (response.Content.Headers.ContentLength is > MaxCompressedBytes)
+        if (response.Content.Headers.ContentLength is long contentLength && contentLength > maxCompressedBytes)
         {
             throw new InvalidDataException("The compressed XMLTV file exceeds the size limit.");
         }
@@ -517,10 +691,10 @@ internal sealed class XmltvFeed
 
         return new DartsSchedule(
             new EpgSource(
-                "deswird.org XMLTV · GuideFull",
-                FeedUrl,
+                sourceName,
+                feedUrl,
                 DateTimeOffset.UtcNow.ToString("O", CultureInfo.InvariantCulture),
-                "D/A/CH laut Quelle; weitere europäische Gebiete sind in diesem Feed nicht ausgewiesen"),
+                scope),
             orderedEvents);
     }
 
@@ -553,6 +727,7 @@ internal sealed class XmltvFeed
         var channel = channelNames.TryGetValue(channelId, out var displayName)
             ? displayName
             : channelId;
+        channel = NormalizeChannelLabel(channelId, channel);
         if (string.IsNullOrWhiteSpace(channel))
         {
             return;
@@ -613,6 +788,16 @@ internal sealed class XmltvFeed
 
     private static string ChildValue(XElement parent, string localName) =>
         parent.Elements().FirstOrDefault(element => element.Name.LocalName == localName)?.Value ?? string.Empty;
+
+    private static string NormalizeChannelLabel(string channelId, string channel) =>
+        channelId.ToLowerInvariant() switch
+        {
+            "skysp+.uk" => "Sky Sports+",
+            "skysp+hd.uk" => "Sky Sports+ HD",
+            "skyspmainevhd.uk" => "Sky Sports Main Event HD",
+            "skysp.mix.hd.uk" => "Sky Sports Mix HD",
+            _ => channel
+        };
 
     private static bool IsDartsProgramme(string title) =>
         Regex.IsMatch(title, @"\b(?:darts?|PDC)\b", RegexOptions.IgnoreCase) &&
