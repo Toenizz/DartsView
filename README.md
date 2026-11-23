@@ -22,7 +22,7 @@ Zusätzlich liest der Server den Darts1.de-Kalender unter `https://www.darts1.de
 
 Sender aus beiden EPG-Feeds werden einem Turnier nur bei übereinstimmendem Turniernamen und Veranstaltungstag zugeordnet. Auf den Turnierkarten erscheinen Deutschland, Österreich, Schweiz und England/UK; „keine EPG-Angabe“ bedeutet, dass der jeweilige Feed für dieses Event und Gebiet keinen Sender nennt. Die App leitet daraus keine Übertragungsrechte oder zusätzliche Sender ab. Beide EPG-Feeds werden unabhängig geladen und zwischengespeichert, damit ein Feed-Ausfall den jeweils anderen nicht blockiert.
 
-Veröffentlichte Paarungen erscheinen direkt im 14-Tage-Spielplan. Bei jeder Paarung steht der Sessionbeginn (zum Beispiel „Session ab 13:45“); das ist nicht die bestätigte Anwurfzeit dieses einzelnen Spiels. Für noch nicht terminierte Paarungen bleibt die Anwurfzeit als offen markiert. Zeiten werden nicht geschätzt.
+Veröffentlichte Paarungen erscheinen direkt im 14-Tage-Spielplan. Wenn eine Quelle nur Sessionbeginn und Spielreihenfolge nennt, zeigt Dartsview unverbindliche Einzelstart-Schätzungen: Best-of-11-Spiele im Abstand von etwa 35 Minuten, längere Formate im Abstand von etwa 50 Minuten. Die erste Partie wird auf den offiziellen Sessionbeginn gesetzt; parallel angesetzte Spiele teilen sich einen Slot. Diese „ca.“-Zeiten können sich durch Spielverlauf und Verzögerungen verschieben und sind keine bestätigten Anwurfzeiten. Noch keiner Session zugeordnete Paarungen bleiben zeitlich offen.
 
 Die App prüft keine Verbreitungsrechte der Sender. Angaben im EPG sind keine Bestätigung, dass ein Programm in jedem Gebiet empfangbar oder lizenziert ist.
 

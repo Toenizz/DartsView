@@ -174,7 +174,11 @@ internal sealed record EpgEvent(
     IReadOnlyList<DartsMatch>? Matches = null,
     string TimingNote = "");
 internal sealed record EpgBroadcast(string Territory, string Channel, string Url);
-internal sealed record DartsMatch(string Player1, string Player2);
+internal sealed record DartsMatch(
+    string Player1,
+    string Player2,
+    string? Start = null,
+    bool IsEstimated = false);
 
 internal static class Darts1Feed
 {
@@ -200,14 +204,40 @@ internal static class Darts1Feed
 
         var now = DateTimeOffset.UtcNow;
         var rangeEnd = now.AddMonths(2);
-        var playersSessions = ParseSessions(await playersTask, PlayersChampionshipUrl, "PDC Players Championship Finals", "Butlin's Minehead Arena", "Minehead", "England", "Europe/London", now, rangeEnd);
+        var playersSessions = ParseSessions(await playersTask, PlayersChampionshipUrl, "PDC Players Championship Finals", "Butlin's Minehead Arena", "Minehead", "England", "Europe/London", now, rangeEnd).ToArray();
+        var drawnMatches = ParsePlayersChampionshipDraw(await playersTask);
+        var firstRoundSessionIndices = Enumerable.Range(0, playersSessions.Length)
+            .Where(index => Regex.IsMatch(playersSessions[index].Stage, @"\b1\.\s*Runde\b", RegexOptions.IgnoreCase))
+            .ToArray();
+        if (drawnMatches.Count == 32 &&
+            firstRoundSessionIndices.Length == 2 &&
+            firstRoundSessionIndices.All(index => playersSessions[index].Matches is not { Count: > 0 }))
+        {
+            const int matchesPerSession = 16;
+            for (var index = 0; index < firstRoundSessionIndices.Length; index++)
+            {
+                var sessionIndex = firstRoundSessionIndices[index];
+                var session = playersSessions[sessionIndex];
+                var sessionMatches = drawnMatches.Skip(index * matchesPerSession).Take(matchesPerSession).ToArray();
+                playersSessions[sessionIndex] = session with
+                {
+                    Matches = EstimateMatchStarts(
+                        sessionMatches,
+                        DateTimeOffset.Parse(session.Start, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
+                        session.Tournament,
+                        session.Stage,
+                        simultaneousMatches: 2),
+                    TimingNote = "Einzelstartzeiten sind Schätzungen ab Sessionbeginn und Spielreihenfolge; parallele Spiele teilen sich einen Slot, Verzögerungen sind möglich."
+                };
+            }
+        }
+
         var events = ParseCalendar(await calendarTask, now, rangeEnd)
             .Concat(playersSessions)
             .Concat(ParseSessions(await lakesideTask, LakesideUrl, "WDF Dart-WM", "Lakeside Country Club", "Frimley Green", "England", "Europe/London", now, rangeEnd))
             .Concat(ParseSessions(await pdcWorldTask, PdcWorldChampionshipUrl, "PDC Darts-WM", "Alexandra Palace", "London", "England", "Europe/London", now, rangeEnd))
             .Concat(ParseSessions(await bahrainTask, BahrainDartsMastersUrl, "PDC Bahrain Darts Masters", "Bahrain International Circuit", "Bahrain", "Bahrain", "Asia/Bahrain", now, rangeEnd));
 
-        var drawnMatches = ParsePlayersChampionshipDraw(await playersTask);
         var scheduledMatchKeys = playersSessions
             .SelectMany(session => session.Matches ?? Array.Empty<DartsMatch>())
             .Select(MatchKey)
@@ -215,7 +245,7 @@ internal static class Darts1Feed
         var unassignedMatches = drawnMatches
             .Where(match => !scheduledMatchKeys.Contains(MatchKey(match)))
             .ToArray();
-        if (unassignedMatches.Length > 0 && playersSessions.Count > 0)
+        if (unassignedMatches.Length > 0 && playersSessions.Length > 0)
         {
             var firstSession = playersSessions[0];
             events = events.Append(new EpgEvent(
@@ -434,7 +464,11 @@ internal static class Darts1Feed
                 detailsEnd = nextHeading;
             }
 
-            var matches = ParseMatchups(html[detailsStart..detailsEnd]);
+            var matches = EstimateMatchStarts(
+                ParseMatchups(html[detailsStart..detailsEnd]),
+                start,
+                tournament,
+                stage);
             sessions.Add(new EpgEvent(
                 CreateId($"session|{tournament}|{start:O}|{stage}"),
                 tournament,
@@ -451,7 +485,7 @@ internal static class Darts1Feed
                 "session",
                 Matches: matches,
                 TimingNote: matches.Count > 0
-                    ? "Individuelle Anwurfzeiten sind nicht veröffentlicht; die Zeit oben ist der Sessionbeginn."
+                    ? "Einzelstartzeiten sind Schätzungen ab Sessionbeginn und Spielreihenfolge; Verzögerungen sind möglich."
                     : string.Empty));
         }
 
@@ -507,6 +541,47 @@ internal static class Darts1Feed
         }
 
         return sessions.DistinctBy(session => session.Id).ToArray();
+    }
+
+    private static IReadOnlyList<DartsMatch> EstimateMatchStarts(
+        IReadOnlyList<DartsMatch> matches,
+        DateTimeOffset sessionStart,
+        string tournament,
+        string stage,
+        int simultaneousMatches = 1)
+    {
+        var interval = EstimatedMatchIntervalMinutes(tournament, stage);
+        return matches
+            .Select((match, index) => match with
+            {
+                Start = sessionStart.AddMinutes(index / simultaneousMatches * interval).ToString("O", CultureInfo.InvariantCulture),
+                IsEstimated = true
+            })
+            .ToArray();
+    }
+
+    private static int EstimatedMatchIntervalMinutes(string tournament, string stage)
+    {
+        var format = Regex.Match(stage, @"Best of\s+(?<count>\d+)\s+(?<unit>sets?|legs?)", RegexOptions.IgnoreCase);
+        if (format.Success)
+        {
+            if (format.Groups["unit"].Value.StartsWith("set", StringComparison.OrdinalIgnoreCase) ||
+                !int.TryParse(format.Groups["count"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var count) ||
+                count > 11)
+            {
+                return 50;
+            }
+
+            return 35;
+        }
+
+        if (tournament.Contains("PDC Darts-WM", StringComparison.OrdinalIgnoreCase) ||
+            Regex.IsMatch(stage, @"Final|Halbfinal|Viertelfinal|Semifinal|Quarterfinal", RegexOptions.IgnoreCase))
+        {
+            return 50;
+        }
+
+        return 35;
     }
 
     private static IReadOnlyList<DartsMatch> ParsePlayersChampionshipDraw(string html)

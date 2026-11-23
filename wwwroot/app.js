@@ -144,6 +144,17 @@ function validateSchedule(payload) {
     )) {
       throw new Error(`Eintrag ${index + 1}: „matches“ muss gültige Spielerpaarungen enthalten.`);
     }
+    for (const match of matches) {
+      if (match.start !== undefined && match.start !== null &&
+          (typeof match.start !== 'string' ||
+           Number.isNaN(new Date(match.start).getTime()) ||
+           !/(Z|[+-]\d{2}:\d{2})$/i.test(match.start))) {
+        throw new Error(`Eintrag ${index + 1}: Eine Spielstartzeit braucht ein gültiges Datum mit Zeitzone.`);
+      }
+      if (match.isEstimated !== undefined && typeof match.isEstimated !== 'boolean') {
+        throw new Error(`Eintrag ${index + 1}: „isEstimated“ muss ein boolescher Wert sein.`);
+      }
+    }
 
     const stop = event.stop ? new Date(event.stop) : null;
     if (stop && Number.isNaN(stop.getTime())) {
@@ -163,7 +174,9 @@ function validateSchedule(payload) {
       allDay: event.allDay === true,
       matches: matches.map(match => ({
         player1: match.player1.trim(),
-        player2: match.player2.trim()
+        player2: match.player2.trim(),
+        start: match.start ? new Date(match.start) : null,
+        isEstimated: match.isEstimated === true
       })),
       timingNote: typeof event.timingNote === 'string' ? event.timingNote : '',
       sourceUrl: safeUrl(event.sourceUrl),
@@ -346,9 +359,9 @@ function makeEventCard(event) {
         makeElement('span', '', match.player1),
         makeElement('span', 'event-match-separator', 'vs'),
         makeElement('span', '', match.player2),
-        makeElement('span', 'event-match-time', event.kind === 'draw'
-          ? 'Anwurfzeit offen'
-          : `Session ab ${timeFormat.format(event.start)}`)
+        makeElement('span', 'event-match-time', match.start && match.isEstimated
+          ? `ca. ${timeFormat.format(match.start)}`
+          : event.kind === 'draw' ? 'Anwurfzeit offen' : `Session ab ${timeFormat.format(event.start)}`)
       );
       matchList.append(item);
     }
