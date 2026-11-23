@@ -1,3 +1,4 @@
+console.log('[app.js] Script loaded, version 0.1.7.5');
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_DAYS = 14;
 const CALENDAR_MONTHS = 2;
@@ -48,7 +49,24 @@ const playerCountryCodes = {
   'Haupai Puha': 'NZ', 'Mitchell Clegg': 'NZ', 'Neil Duff': 'GB',
   'Ross Montgomery': 'GB', 'Richard North': 'GB', 'Andy Hamilton': 'GB',
   'Darren Webster': 'GB', 'Adrian Lewis': 'GB', 'Steve Beaton': 'GB',
-  'Robert Thornton': 'GB', 'Brentford': 'GB'
+    'Robert Thornton': 'GB', 'Brentford': 'GB',
+    'Stephen Burton': 'GB', 'Ryan Joyce': 'GB',
+    'Martin Lukeman': 'GB', 'Berry van Peer': 'NL',
+        'Madars Razma': 'LV',
+        'Justin Hood': 'GB', 'Connor Scutt': 'GB', 'Darryl Pilgrim': 'GB',
+        'Tom Sykes': 'GB', 'Maik Kuivenhoven': 'NL', 'Bradley Brooks': 'GB',
+        'Joe Hunt': 'GB', 'Karel Sedlacek': 'CZ', 'Mickey Mansell': 'GB',
+        'Aurora Fochesato': 'IT', 'Steph Clarke': 'CA', 'Stefan Schroder': 'DE',
+        'Pat Scurfield': 'GB', 'Ben Townley': 'GB', 'Niels Zonneveld': 'NL',
+        'Berry Pater': 'NL', 'Jitse Van der Wal': 'NL', 'Corne Groeneveld': 'NL',
+        'Cali West': 'US', 'Cam Crabtree': 'GB', 'Leonard Gates': 'US',
+        'Boris Krcmar': 'HR', 'Niko Chamil': 'DE', 'Nathan Girvan': 'GB',
+        'Adam Lipscombe': 'GB', 'Adam Warner': 'GB', 'Adam Paxton': 'GB',
+        'Jamie Hughes': 'GB', 'Ian White': 'GB', 'Keegan Brown': 'GB',
+        'Martijn Dragt': 'NL', 'Martijn Kleermaker': 'NL', 'Vincent van der Voort': 'NL',
+        'Haupai Puha': 'NZ', 'Mitchell Clegg': 'NZ', 'Neil Duff': 'GB',
+        'Ross Montgomery': 'GB', 'Richard North': 'GB', 'Andy Hamilton': 'GB',
+        'Darren Webster': 'GB', 'Adrian Lewis': 'GB', 'Steve Beaton': 'GB'
 };
 const playerWorldRanks = {
   'Luke Humphries': 1, 'Luke Littler': 2, 'Michael van Gerwen': 3,
@@ -110,7 +128,49 @@ const broadcastRegions = [
   { label: 'Schweiz', territories: ['Schweiz'] },
   { label: 'England/UK', territories: ['England', 'UK', 'United Kingdom', 'Vereinigtes Königreich'] },
   { label: 'Niederlande', territories: ['Niederlande'] },
-  { label: 'Belgien', territories: ['Belgien'] }
+  { label: 'Spanien', territories: ['Spanien', 'Spain', 'España'] },
+  { label: 'Italien', territories: ['Italien', 'Italy', 'Italia'] },
+  { label: 'Polen', territories: ['Polen', 'Poland', 'Polska'] },
+  { label: 'Tschechien', territories: ['Tschechien', 'Czech Republic', 'Tschechische Republik', 'Česko'] },
+  { label: 'Dänemark', territories: ['Dänemark', 'Denmark', 'Danmark'] },
+  { label: 'Schweden', territories: ['Schweden', 'Sweden', 'Sverige'] },
+  { label: 'Norwegen', territories: ['Norwegen', 'Norway', 'Norge'] },
+  { label: 'Finnland', territories: ['Finnland', 'Finland', 'Suomi'] },
+  { label: 'Irland', territories: ['Irland', 'Ireland', 'Éire'] },
+  { label: 'Portugal', territories: ['Portugal'] },
+  { label: 'Griechenland', territories: ['Griechenland', 'Greece', 'Ελλάδα'] },
+  { label: 'Ungarn', territories: ['Ungarn', 'Hungary', 'Magyarország'] },
+  { label: 'Rumänien', territories: ['Rumänien', 'Romania', 'România'] },
+  { label: 'Bulgarien', territories: ['Bulgarien', 'Bulgaria', 'България'] },
+  { label: 'Kroatien', territories: ['Kroatien', 'Croatia', 'Hrvatska'] },
+  { label: 'Slowenien', territories: ['Slowenien', 'Slovenia', 'Slovenija'] },
+  { label: 'Slowakei', territories: ['Slowakei', 'Slovakia', 'Slovensko'] },
+  { label: 'Estland', territories: ['Estland', 'Estonia', 'Eesti'] },
+  { label: 'Lettland', territories: ['Lettland', 'Latvia', 'Latvija'] },
+  { label: 'Litauen', territories: ['Litauen', 'Lithuania', 'Lietuva'] },
+  { label: 'Luxemburg', territories: ['Luxemburg', 'Luxembourg', 'Lëtzebuerg'] },
+  { label: 'Malta', territories: ['Malta'] },
+  { label: 'Zypern', territories: ['Zypern', 'Cyprus', 'Κύπρος'] },
+  { label: 'Island', territories: ['Island', 'Iceland', 'Ísland'] },
+  { label: 'Liechtenstein', territories: ['Liechtenstein'] },
+  { label: 'Monaco', territories: ['Monaco'] },
+  { label: 'San Marino', territories: ['San Marino'] },
+  { label: 'Vatikanstadt', territories: ['Vatikanstadt', 'Vatican City'] },
+  { label: 'Andorra', territories: ['Andorra'] },
+  { label: 'Serbien', territories: ['Serbien', 'Serbia', 'Србија'] },
+  { label: 'Bosnien und Herzegowina', territories: ['Bosnien und Herzegowina', 'Bosnia and Herzegovina', 'Bosna i Hercegovina'] },
+  { label: 'Montenegro', territories: ['Montenegro', 'Crna Gora'] },
+  { label: 'Nordmazedonien', territories: ['Nordmazedonien', 'North Macedonia', 'Северна Македонија'] },
+  { label: 'Albanien', territories: ['Albanien', 'Albania', 'Shqipëri'] },
+  { label: 'Moldau', territories: ['Moldau', 'Moldova', 'Republica Moldova'] },
+  { label: 'Ukraine', territories: ['Ukraine', 'Ukraina', 'Україна'] },
+  { label: 'Weißrussland', territories: ['Weißrussland', 'Belarus', 'Беларусь'] },
+  { label: 'Russland', territories: ['Russland', 'Russia', 'Россия'] },
+  { label: 'Türkei', territories: ['Türkei', 'Turkey', 'Türkiye'] },
+  { label: 'Georgien', territories: ['Georgien', 'Georgia', 'საქართველო'] },
+  { label: 'Armenien', territories: ['Armenien', 'Armenia', 'Հայաստան'] },
+  { label: 'Aserbaidschan', territories: ['Aserbaidschan', 'Azerbaijan', 'Azərbaycan'] },
+  { label: 'Kasachstan', territories: ['Kasachstan', 'Kazakhstan', 'Қазақстан'] }
 ];
 const storedFeedUrl = localStorage.getItem('dartsview-feed-url') || '';
 const localApiUrl = location.protocol === 'http:' || location.protocol === 'https:' ? '/api/schedule' : '';
@@ -120,12 +180,10 @@ const state = {
   events: [],
   ukEvents: [],
   nlEvents: [],
-  beEvents: [],
   tournamentEvents: [],
   source: null,
   ukSource: null,
   nlSource: null,
-  beSource: null,
   tournamentSource: null,
   search: '',
   country: '',
@@ -135,7 +193,6 @@ const state = {
   refreshError: '',
   ukError: '',
   nlError: '',
-  beError: '',
   tournamentError: ''
 };
 
@@ -336,7 +393,7 @@ function getAllEvents() {
 }
 
 function getEpgEvents() {
-  return [...state.events, ...state.ukEvents, ...state.nlEvents, ...state.beEvents];
+  return [...state.events, ...state.ukEvents, ...state.nlEvents];
 }
 
 function getLocalDateKey(date) {
@@ -391,9 +448,17 @@ function getEventBroadcasts(event) {
 }
 
 function displayTerritory(territory) {
-  return ['England', 'UK', 'United Kingdom', 'Vereinigtes Königreich'].includes(territory)
-    ? 'England/UK'
-    : territory;
+  const labels = {
+    'Deutschland': 'Deutschland',
+    'Österreich': 'Österreich',
+    'Schweiz': 'Schweiz',
+    'Niederlande': 'Niederlande',
+    'UK': 'UK',
+    'England': 'England',
+    'United Kingdom': 'UK',
+    'Vereinigtes Königreich': 'UK'
+  };
+  return labels[territory] || territory;
 }
 
 function isInRange(event) {
@@ -444,88 +509,25 @@ function countryCodeForPlayer(playerName, suppliedCode) {
 function makeCountryFlag(code) {
   if (!/^[A-Z]{2}$/.test(code)) return null;
 
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', '0 0 30 20');
-  svg.setAttribute('aria-hidden', 'true');
-  svg.setAttribute('focusable', 'false');
-  svg.classList.add('event-player-flag');
-
-  const rect = (x, y, width, height, fill) => {
-    const element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    element.setAttribute('x', x);
-    element.setAttribute('y', y);
-    element.setAttribute('width', width);
-    element.setAttribute('height', height);
-    element.setAttribute('fill', fill);
-    svg.append(element);
-  };
-  const rectFull = fill => rect(0, 0, 30, 20, fill);
-  const horizontal = fills => fills.forEach((fill, index) => rect(0, index * 20 / fills.length, 30, 20 / fills.length, fill));
-
+  // Use flagcdn.com for official flag images
+  // For England (GB-ENG), use the St George's Cross flag instead of UK flag
+  let flagCode = code.toLowerCase();
   if (code === 'GB') {
-    rectFull('#1f4b99');
-    rect(0, 7, 30, 6, '#fff');
-    rect(12, 0, 6, 20, '#fff');
-    rect(0, 8.5, 30, 3, '#cf142b');
-    rect(13.5, 0, 3, 20, '#cf142b');
-  } else if (code === 'DE') horizontal(['#171717', '#dd0000', '#ffce00']);
-  else if (code === 'NL') horizontal(['#ae1c28', '#fff', '#21468b']);
-  else if (code === 'AT') horizontal(['#ed2939', '#fff', '#ed2939']);
-  else if (code === 'BE') rect(0, 0, 10, 20, '#171717'), rect(10, 0, 10, 20, '#fade4b'), rect(20, 0, 10, 20, '#ef3340');
-  else if (code === 'PL') rect(0, 0, 30, 10, '#fff'), rect(0, 10, 30, 10, '#dc143c');
-  else if (code === 'FR') rect(0, 0, 10, 20, '#002395'), rect(10, 0, 10, 20, '#fff'), rect(20, 0, 10, 20, '#ed2939');
-  else if (code === 'IT') rect(0, 0, 10, 20, '#009246'), rect(10, 0, 10, 20, '#fff'), rect(20, 0, 10, 20, '#ce2b37');
-  else if (code === 'IE') rect(0, 0, 10, 20, '#169b62'), rect(10, 0, 10, 20, '#fff'), rect(20, 0, 10, 20, '#ff883e');
-  else if (code === 'FI') rectFull('#fff'), rect(0, 7.5, 30, 5, '#003580'), rect(8, 0, 5, 20, '#003580');
-  else if (code === 'SE') rectFull('#006aa7'), rect(0, 7.5, 30, 5, '#fecc00'), rect(8, 0, 5, 20, '#fecc00');
-  else if (code === 'NO') rectFull('#ba0c2f'), rect(0, 7, 30, 6, '#fff'), rect(8, 0, 5, 20, '#fff'), rect(0, 8.5, 30, 3, '#00205b'), rect(9.5, 0, 2, 20, '#00205b');
-  else if (code === 'DK') rectFull('#c60c30'), rect(0, 8, 30, 4, '#fff'), rect(8, 0, 4, 20, '#fff');
-  else if (code === 'CH') rectFull('#d52b1e'), rect(11.5, 3, 7, 14, '#fff'), rect(7, 7.5, 16, 5, '#fff');
-  else if (code === 'UA') horizontal(['#005bbb', '#ffd500']);
-  else if (code === 'RU') horizontal(['#fff', '#0039a6', '#d52b1e']);
-  else if (code === 'RO') rect(0, 0, 10, 20, '#002b7f'), rect(10, 0, 10, 20, '#fcd116'), rect(20, 0, 10, 20, '#ce1126');
-  else if (code === 'BG') horizontal(['#fff', '#00966e', '#d62612']);
-  else if (code === 'LT') horizontal(['#fdb913', '#006a44', '#c1272d']);
-  else if (code === 'PT') rect(0, 0, 12, 20, '#046a38'), rect(12, 0, 18, 20, '#da291c');
-  else if (code === 'ES') horizontal(['#aa151b', '#f1bf00', '#aa151b']);
-  else if (code === 'JP') rectFull('#fff'), (() => {
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', '15');
-    circle.setAttribute('cy', '10');
-    circle.setAttribute('r', '5');
-    circle.setAttribute('fill', '#bc002d');
-    svg.append(circle);
-  })();
-  else if (code === 'AU') rectFull('#000066'), rect(0, 0, 15, 10, '#000066');
-  else if (code === 'NZ') rectFull('#00247d');
-  else if (code === 'CA') rect(0, 0, 7.5, 20, '#d80621'), rect(7.5, 0, 15, 20, '#fff'), rect(22.5, 0, 7.5, 20, '#d80621');
-  else if (code === 'US') {
-    for (let index = 0; index < 7; index++) rect(0, index * 20 / 7, 30, 20 / 7, index % 2 ? '#fff' : '#b22234');
-    rect(0, 0, 12, 8.6, '#3c3b6e');
-  } else if (code === 'SG') horizontal(['#ef3340', '#fff']);
-  else if (code === 'CZ') rect(0, 0, 30, 10, '#fff'), rect(0, 10, 30, 10, '#d7141a');
-  else if (code === 'TR') rectFull('#e30a17'), (() => {
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', '12');
-    circle.setAttribute('cy', '10');
-    circle.setAttribute('r', '5');
-    circle.setAttribute('fill', '#fff');
-    svg.append(circle);
-  })();
-  else if (code === 'IN') horizontal(['#ff9933', '#fff', '#138808']);
-  else if (code === 'BR') rectFull('#009c3b'), (() => {
-    const diamond = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-    diamond.setAttribute('points', '15,2 28,10 15,18 2,10');
-    diamond.setAttribute('fill', '#ffdf00');
-    svg.append(diamond);
-  })();
-  else if (code === 'KR') rectFull('#fff');
-  else if (code === 'ZA') rectFull('#007749');
-  else if (code === 'HR') horizontal(['#ff0000', '#fff', '#171796']);
-  else if (code === 'HU') horizontal(['#ce2939', '#fff', '#477050']);
-  else rectFull('#667085');
+    // Use England flag (St George's Cross) instead of UK flag
+    flagCode = 'gb-eng';
+  }
 
-  return svg;
+  const img = document.createElement('img');
+  img.src = `https://flagcdn.com/32x24/${flagCode}.png`;
+  img.alt = code;
+  img.title = code;
+  img.classList.add('event-player-flag');
+  img.setAttribute('aria-label', `Land: ${code}`);
+  img.setAttribute('role', 'img');
+  img.loading = 'lazy';
+  img.width = 32;
+  img.height = 24;
+  return img;
 }
 
 function makePlayer(playerName, suppliedCode, suppliedRank) {
@@ -550,16 +552,17 @@ function makeBroadcasts(event) {
   const container = makeElement('div', 'event-broadcasts');
   const broadcasts = getEventBroadcasts(event);
   const displayedTerritories = new Set();
+  // Only show regions that have actual broadcasts
+  const regionsWithBroadcasts = [];
   for (const region of broadcastRegions) {
     const regionalBroadcasts = broadcasts.filter(item => region.territories.includes(item.territory));
-    for (const territory of region.territories) displayedTerritories.add(territory);
-    if (!regionalBroadcasts.length) {
-      const chip = makeElement('span', 'broadcast-chip broadcast-chip--unknown', `${region.label}: keine EPG-Angabe`);
-      chip.title = `Für ${region.label} enthält das EPG zu diesem Event keine Senderangabe.`;
-      container.append(chip);
-      continue;
+    if (regionalBroadcasts.length) {
+      regionsWithBroadcasts.push({ region, regionalBroadcasts });
+      for (const territory of region.territories) displayedTerritories.add(territory);
     }
+  }
 
+  for (const { region, regionalBroadcasts } of regionsWithBroadcasts) {
     for (const broadcast of regionalBroadcasts) {
       const label = `${region.label}: ${broadcast.channel}`;
       if (broadcast.url) {
@@ -724,7 +727,7 @@ function render() {
   }
 
 function updateSourceStatus() {
-  const retrievedAt = [state.source?.retrievedAt, state.ukSource?.retrievedAt, state.nlSource?.retrievedAt, state.beSource?.retrievedAt, state.tournamentSource?.retrievedAt]
+  const retrievedAt = [state.source?.retrievedAt, state.ukSource?.retrievedAt, state.nlSource?.retrievedAt, state.tournamentSource?.retrievedAt]
     .filter(value => value instanceof Date && !Number.isNaN(value.getTime()))
     .sort((left, right) => right.getTime() - left.getTime())[0];
   const freshness = retrievedAt && !Number.isNaN(retrievedAt.getTime())
@@ -734,13 +737,12 @@ function updateSourceStatus() {
     state.refreshError && `D/A/CH-EPG: ${state.refreshError}`,
     state.ukError && `UK-EPG: ${state.ukError}`,
     state.nlError && `NL-EPG: ${state.nlError}`,
-    state.beError && `BE-EPG: ${state.beError}`,
     state.tournamentError && `Turnierkalender: ${state.tournamentError}`
   ].filter(Boolean);
-  const hasSource = Boolean(state.source || state.ukSource || state.nlSource || state.beSource || state.tournamentSource);
+  const hasSource = Boolean(state.source || state.ukSource || state.nlSource || state.tournamentSource);
   elements.statStatus.textContent = errors.length
     ? (hasSource ? 'Teilweise' : 'Fehler')
-    : state.source || state.ukSource || state.nlSource || state.beSource ? 'Verbunden' : state.tournamentSource ? 'Kalender geladen' : 'Keine Quelle';
+    : state.source || state.ukSource || state.nlSource ? 'Verbunden' : state.tournamentSource ? 'Kalender geladen' : 'Keine Quelle';
   elements.statStatus.style.color = errors.length ? 'var(--orange)' : hasSource ? 'var(--lime)' : '';
   elements.statUpdated.textContent = errors.length
     ? errors.join(' · ')
@@ -750,7 +752,7 @@ function updateSourceStatus() {
 function updateFilters() {
   const currentCountry = elements.country.value;
   const allEvents = getAllEvents().filter(isInRange);
-  const supportedTerritories = ['Deutschland', 'Österreich', 'Schweiz', 'England', 'UK', 'United Kingdom', 'Vereinigtes Königreich', 'Niederlande', 'Belgien'];
+  const supportedTerritories = ['Deutschland', 'Österreich', 'Schweiz', 'Niederlande', 'UK'];
   const countries = [...new Set(allEvents.flatMap(event => getEventBroadcasts(event).map(item => item.territory)))]
     .filter(c => supportedTerritories.includes(c))
     .sort();
@@ -800,10 +802,13 @@ function setActiveTab(tab) {
 }
 
 async function loadPayload(payload) {
+  console.log('[loadPayload] Called, payload has events:', Array.isArray(payload?.events), 'has source:', !!payload?.source);
   const result = validateSchedule(payload);
+  console.log('[loadPayload] validateSchedule result, events:', result.events?.length, 'source:', result.source);
   state.events = result.events;
   state.source = result.source;
   state.refreshError = '';
+  console.log('[loadPayload] state.source set to:', state.source);
   updateFilters();
   render();
 }
@@ -866,47 +871,43 @@ async function loadNetherlandsSchedule() {
   render();
 }
 
-async function loadBelgiumSchedule() {
-  try {
-    const response = await fetch('/api/schedule-be', { headers: { Accept: 'application/json' } });
-    if (!response.ok) throw new Error(`BE-EPG: HTTP ${response.status}.`);
-    const result = validateSchedule(await response.json());
-    state.beEvents = result.events;
-    state.beSource = result.source;
-    state.beError = '';
-  } catch (error) {
-    state.beError = error instanceof Error ? error.message : 'Der BE-EPG konnte nicht geladen werden.';
-  }
-  updateFilters();
-  render();
-}
 
 async function loadFeed(url) {
+  console.log('[loadFeed] Called with url:', url);
   try {
     const requestUrl = getFeedRequestUrl(url);
+    console.log('[loadFeed] requestUrl:', requestUrl);
     const response = await fetch(requestUrl, { headers: { Accept: 'application/json' } });
+    console.log('[loadFeed] response.ok:', response.ok, 'status:', response.status);
     if (!response.ok) throw new Error(`Der Feed antwortet mit HTTP ${response.status}.`);
-    await loadPayload(await response.json());
+    const payload = await response.json();
+    console.log('[loadFeed] payload received, has events:', Array.isArray(payload?.events), 'has source:', !!payload?.source);
+    await loadPayload(payload);
+    console.log('[loadFeed] loadPayload done, state.source:', state.source);
     state.source.url = safeUrl(requestUrl) || state.source.url;
     state.feedUrl = url;
     localStorage.setItem('dartsview-feed-url', url);
     render();
   } catch (error) {
+    console.error('[loadFeed] Error:', error);
     state.refreshError = error instanceof Error ? error.message : 'Der Feed konnte nicht geladen werden.';
     render();
   }
 }
 
 function init() {
+  console.log('[init] Starting init, state.feedUrl:', state.feedUrl, 'protocol:', location.protocol);
   setPeriod();
   if (location.protocol === 'http:' || location.protocol === 'https:') {
     loadUkSchedule();
     loadNetherlandsSchedule();
-    loadBelgiumSchedule();
     loadTournamentEvents();
   }
   if (state.feedUrl) {
+    console.log('[init] Calling loadFeed with:', state.feedUrl);
     loadFeed(state.feedUrl);
+  } else {
+    console.log('[init] No feedUrl, skipping loadFeed');
   }
 
   elements.search.addEventListener('input', () => {
@@ -950,7 +951,6 @@ function init() {
     if (location.protocol === 'http:' || location.protocol === 'https:') {
       loadUkSchedule();
       loadNetherlandsSchedule();
-      loadBelgiumSchedule();
       loadTournamentEvents();
     }
   }, 2 * 60 * 60 * 1000);

@@ -197,13 +197,13 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
   .hero-date { margin-right: 0; }
   .hero-decoration { right: 145px; }
   .filters { flex-wrap: wrap; }
-  .search-field { flex-basis: 100%; }
+  .search-field { flex-basis: 100%; word-wrap: anywhere; white-space: normal; }
   .select-wrap { flex: 1; }
   .event-card { grid-template-columns: 72px minmax(0, 1fr) minmax(72px, 96px) 16px; gap: 12px; }
   .event-venue { display: none; }
   .event-match { grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr); }
   .event-title .event-match-info { grid-column: 1 / -1; justify-content: flex-start; max-width: 96px; }
-  .event-match .event-match-time { text-align: left; }
+  .event-match .event-match-time { text-align: left; word-wrap: anywhere; white-space: normal; }
   .footer { flex-wrap: wrap; justify-content: flex-start; padding: 16px 0; }
 }
 
