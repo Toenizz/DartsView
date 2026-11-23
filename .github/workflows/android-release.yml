@@ -25,6 +25,7 @@ jobs:
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
       - name: Install .NET Android workload
         run: dotnet workload install android
+        working-directory: ${{ runner.temp }}
       - name: Prepare existing upload keystore
         env:
           ANDROID_SIGNING_KEYSTORE_BASE64: ${{ secrets.ANDROID_SIGNING_KEYSTORE_BASE64 }}
@@ -43,6 +44,7 @@ jobs:
           chmod 600 "$key_store"
           echo "AndroidSigningKeyStore=$key_store" >> "$GITHUB_ENV"
       - name: Build signed Play Store bundle
+        working-directory: ${{ runner.temp }}
         env:
           AndroidSigningKeyAlias: ${{ secrets.ANDROID_SIGNING_KEY_ALIAS }}
           AndroidSigningKeyPass: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
@@ -50,10 +52,10 @@ jobs:
           AndroidKeyStore: "true"
         run: |
           set -euo pipefail
-          dotnet publish android/Dartsview.Android.csproj -c Release -f net10.0-android36.0 -p:PlayStoreBuild=true
-          bundle="$(find android/bin/Release/net10.0-android36.0 -type f -name '*.aab' -print -quit)"
+          dotnet publish "$GITHUB_WORKSPACE/android/Dartsview.Android.csproj" -c Release -f net10.0-android36.0 -p:PlayStoreBuild=true
+          bundle="$(find "$GITHUB_WORKSPACE/android/bin/Release/net10.0-android36.0" -type f -name '*.aab' -print -quit)"
           test -n "$bundle" || { echo "::error::The signed Android App Bundle was not produced"; exit 1; }
-          cp "$bundle" Dartsview-playstore.aab
+          cp "$bundle" "$GITHUB_WORKSPACE/Dartsview-playstore.aab"
       - name: Attach bundle to GitHub release
         uses: softprops/action-gh-release@v2
         with:

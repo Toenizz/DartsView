@@ -25,13 +25,15 @@ jobs:
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
       - name: Install .NET Android workload
         run: dotnet workload install android
+        working-directory: ${{ runner.temp }}
       - name: Build test APK
+        working-directory: ${{ runner.temp }}
         run: |
           set -euo pipefail
-          dotnet publish android/Dartsview.Android.csproj -c Release -f net10.0-android36.0 -p:AndroidPackageFormat=apk
-          apk="$(find android/bin/Release/net10.0-android36.0 -type f -name '*-Signed.apk' -print -quit)"
+          dotnet publish "$GITHUB_WORKSPACE/android/Dartsview.Android.csproj" -c Release -f net10.0-android36.0 -p:AndroidPackageFormat=apk
+          apk="$(find "$GITHUB_WORKSPACE/android/bin/Release/net10.0-android36.0" -type f -name '*-Signed.apk' -print -quit)"
           test -n "$apk" || { echo "::error::The test APK was not produced"; exit 1; }
-          cp "$apk" Dartsview-test.apk
+          cp "$apk" "$GITHUB_WORKSPACE/Dartsview-test.apk"
       - name: Attach test APK to GitHub release
         uses: softprops/action-gh-release@v2
         with:
