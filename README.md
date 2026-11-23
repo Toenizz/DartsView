@@ -45,4 +45,4 @@ Den Base64-Wert kannst du lokal in PowerShell erzeugen:
 
 Ein Tag wie `v0.1.6-playstore` startet den signierten AAB-Build und hängt `Dartsview-playstore.aab` an ein GitHub Release an. Dieses AAB kann anschließend in der Play Console hochgeladen werden; die Workflow-Automatisierung veröffentlicht es nicht selbst im Store. Der Play-Store-Build bricht explizit ab, wenn Keystore oder Zugangsdaten fehlen.
 
-Test-APKs sind mit dem Android-Debug-Schlüssel signiert. Sie sind nicht für den Play Store oder als dauerhaft aktualisierbare Installation gedacht; spätere Builds können einen anderen Schlüssel verwenden. Für eine dauerhafte Verteilung muss ein eigener privater Release-Schlüssel eingerichtet werden.
+Für Gerätetests erzeugt ein `v*-test`-Tag separat eine APK mit Debug-Signatur. Diese Test-APK ist nicht für den Play Store geeignet und lässt sich nicht zuverlässig über eine Play-Store-Installation aktualisieren.
