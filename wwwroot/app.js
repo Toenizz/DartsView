@@ -1,4 +1,4 @@
-console.log('[app.js] Script loaded, version 0.1.7.5');
+﻿console.log('[app.js] Script loaded, version 0.1.7.7');
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_DAYS = 14;
 const CALENDAR_MONTHS = 2;
@@ -127,54 +127,85 @@ const broadcastRegions = [
   { label: 'Österreich', territories: ['Österreich'] },
   { label: 'Schweiz', territories: ['Schweiz'] },
   { label: 'England/UK', territories: ['England', 'UK', 'United Kingdom', 'Vereinigtes Königreich'] },
-  { label: 'Niederlande', territories: ['Niederlande'] },
-  { label: 'Spanien', territories: ['Spanien', 'Spain', 'España'] },
-  { label: 'Italien', territories: ['Italien', 'Italy', 'Italia'] },
-  { label: 'Polen', territories: ['Polen', 'Poland', 'Polska'] },
-  { label: 'Tschechien', territories: ['Tschechien', 'Czech Republic', 'Tschechische Republik', 'Česko'] },
-  { label: 'Dänemark', territories: ['Dänemark', 'Denmark', 'Danmark'] },
-  { label: 'Schweden', territories: ['Schweden', 'Sweden', 'Sverige'] },
-  { label: 'Norwegen', territories: ['Norwegen', 'Norway', 'Norge'] },
-  { label: 'Finnland', territories: ['Finnland', 'Finland', 'Suomi'] },
-  { label: 'Irland', territories: ['Irland', 'Ireland', 'Éire'] },
-  { label: 'Portugal', territories: ['Portugal'] },
-  { label: 'Griechenland', territories: ['Griechenland', 'Greece', 'Ελλάδα'] },
-  { label: 'Ungarn', territories: ['Ungarn', 'Hungary', 'Magyarország'] },
-  { label: 'Rumänien', territories: ['Rumänien', 'Romania', 'România'] },
-  { label: 'Bulgarien', territories: ['Bulgarien', 'Bulgaria', 'България'] },
-  { label: 'Kroatien', territories: ['Kroatien', 'Croatia', 'Hrvatska'] },
-  { label: 'Slowenien', territories: ['Slowenien', 'Slovenia', 'Slovenija'] },
-  { label: 'Slowakei', territories: ['Slowakei', 'Slovakia', 'Slovensko'] },
-  { label: 'Estland', territories: ['Estland', 'Estonia', 'Eesti'] },
-  { label: 'Lettland', territories: ['Lettland', 'Latvia', 'Latvija'] },
-  { label: 'Litauen', territories: ['Litauen', 'Lithuania', 'Lietuva'] },
-  { label: 'Luxemburg', territories: ['Luxemburg', 'Luxembourg', 'Lëtzebuerg'] },
-  { label: 'Malta', territories: ['Malta'] },
-  { label: 'Zypern', territories: ['Zypern', 'Cyprus', 'Κύπρος'] },
-  { label: 'Island', territories: ['Island', 'Iceland', 'Ísland'] },
-  { label: 'Liechtenstein', territories: ['Liechtenstein'] },
-  { label: 'Monaco', territories: ['Monaco'] },
-  { label: 'San Marino', territories: ['San Marino'] },
-  { label: 'Vatikanstadt', territories: ['Vatikanstadt', 'Vatican City'] },
-  { label: 'Andorra', territories: ['Andorra'] },
-  { label: 'Serbien', territories: ['Serbien', 'Serbia', 'Србија'] },
-  { label: 'Bosnien und Herzegowina', territories: ['Bosnien und Herzegowina', 'Bosnia and Herzegovina', 'Bosna i Hercegovina'] },
-  { label: 'Montenegro', territories: ['Montenegro', 'Crna Gora'] },
-  { label: 'Nordmazedonien', territories: ['Nordmazedonien', 'North Macedonia', 'Северна Македонија'] },
-  { label: 'Albanien', territories: ['Albanien', 'Albania', 'Shqipëri'] },
-  { label: 'Moldau', territories: ['Moldau', 'Moldova', 'Republica Moldova'] },
-  { label: 'Ukraine', territories: ['Ukraine', 'Ukraina', 'Україна'] },
-  { label: 'Weißrussland', territories: ['Weißrussland', 'Belarus', 'Беларусь'] },
-  { label: 'Russland', territories: ['Russland', 'Russia', 'Россия'] },
-  { label: 'Türkei', territories: ['Türkei', 'Turkey', 'Türkiye'] },
-  { label: 'Georgien', territories: ['Georgien', 'Georgia', 'საქართველო'] },
-  { label: 'Armenien', territories: ['Armenien', 'Armenia', 'Հայաստան'] },
-  { label: 'Aserbaidschan', territories: ['Aserbaidschan', 'Azerbaijan', 'Azərbaycan'] },
-  { label: 'Kasachstan', territories: ['Kasachstan', 'Kazakhstan', 'Қазақстан'] }
+  { label: 'Niederlande', territories: ['Niederlande'] }
 ];
 const storedFeedUrl = localStorage.getItem('dartsview-feed-url') || '';
 const localApiUrl = location.protocol === 'http:' || location.protocol === 'https:' ? '/api/schedule' : '';
 const xmltvFeedUrl = 'https://deswird.org/iptv/GuideFull.xml.gz';
+
+// Tournament logo mapping - maps tournament names to logo URLs
+const tournamentLogos = {
+  'PDC': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC World Championship': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Darts-WM': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC World Darts Championship': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'WDF World Championship': 'https://www.darts1.de/bilder/termine/wdf.gif',
+  'WDF Dart-WM': 'https://www.darts1.de/bilder/termine/wdf.gif',
+  'PDC Players Championship Finals': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'Players Championship Finals': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Premier League': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC World Matchplay': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC World Grand Prix': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Grand Slam of Darts': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'Grand Slam of Darts': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC European Championship': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC UK Open': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Masters': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC World Series Finals': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC World Cup of Darts': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Bahrain Darts Masters': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Dutch Darts Masters': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Nordic Darts Masters': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Australian Darts Masters': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC New Zealand Darts Masters': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC US Darts Masters': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Poland Darts Masters': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC EU Qualifying School': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC UK Qualifying School': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Challenge Tour': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Development Tour': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDPA World Championship Qualifikation': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC World Youth Championship': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Women\'s World Matchplay': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'PDC Women\'s Series': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'WDF World Masters': 'https://www.darts1.de/bilder/termine/wdf.gif',
+  'WDF Europe Cup': 'https://www.darts1.de/bilder/termine/wdf.gif',
+  'WDF Asia-Pacific Cup': 'https://www.darts1.de/bilder/termine/wdf.gif',
+  'WDF Americas Cup': 'https://www.darts1.de/bilder/termine/wdf.gif',
+  'DDV German Masters': 'https://www.darts1.de/bilder/termine/ddv.gif',
+  'DDV German Open': 'https://www.darts1.de/bilder/termine/ddv.gif',
+  'DDV Ranglistenturnier': 'https://www.darts1.de/bilder/termine/ddv.gif',
+  'DSAB Swiss Darts Open': 'https://www.darts1.de/bilder/termine/dsab.gif',
+  'DSAB Masters of Masters': 'https://www.darts1.de/bilder/termine/dsab.gif',
+  'DSAB Deutsche Meisterschaften': 'https://www.darts1.de/bilder/termine/dsab.gif',
+  'Modus Super Series': 'https://www.darts1.de/bilder/termine/pdc.gif',
+  'Modus Darts': 'https://www.darts1.de/bilder/termine/pdc.gif',
+};
+
+// Channel/Sender logo mapping for tournaments without specific competition logos
+const channelLogos = {
+  // German broadcasters
+  'ProSieben': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/ProSieben_2014.svg/200px-ProSieben_2014.svg.png',
+  'SAT.1': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Sat.1_Logo_2017.svg/200px-Sat.1_Logo_2017.svg.png',
+  'VOX': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/VOX_%28ProSiebenSat.1%29_logo.svg/200px-VOX_%28ProSiebenSat.1%29_logo.svg.png',
+  'RTL II': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/RTL_II_2021.svg/200px-RTL_II_2021.svg.png',
+  'Kabel Eins': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Kabel_Eins_Logo.svg/200px-Kabel_Eins_Logo.svg.png',
+  'Sport1': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Sport1_Logo_2019.svg/200px-Sport1_Logo_2019.svg.png',
+  'SPORT 1': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Sport1_Logo_2019.svg/200px-Sport1_Logo_2019.svg.png',
+  'DAZN': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/DAZN_Logo.svg/200px-DAZN_Logo.svg.png',
+  'Eurosport': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Eurosport_logo_%282015%29.svg/200px-Eurosport_logo_%282015%29.svg.png',
+  'ZDF': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/ZDF_logo.svg/200px-ZDF_logo.svg.png',
+
+  // UK broadcasters
+  'Channel 4': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Channel_4_%28OnDemand%29.svg/200px-Channel_4_%28OnDemand%29.svg.png',
+  'ITV': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/ITV_Logo.svg/200px-ITV_Logo.svg.png',
+  'Sky Sports': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Sky_Sports_Logo.svg/200px-Sky_Sports_Logo.svg.png',
+
+  // Dutch broadcasters
+  'NPO 1': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Nederlandse_Publieke_Omroep_logo.svg/200px-Nederlandse_Publieke_Omroep_logo.svg.png',
+  'Ziggo Sport': 'https://logo.clearbit.com/ziggosport.nl',
+};
+
 
 const state = {
   events: [],
@@ -304,15 +335,6 @@ function validateSchedule(payload) {
     }
 
     const matches = event.matches ?? [];
-    if (!Array.isArray(matches) || matches.some(match =>
-      !match ||
-      typeof match.player1 !== 'string' ||
-      !match.player1.trim() ||
-      typeof match.player2 !== 'string' ||
-      !match.player2.trim()
-    )) {
-      throw new Error(`Eintrag ${index + 1}: „matches“ muss gültige Spielerpaarungen enthalten.`);
-    }
     for (const match of matches) {
       if (match.start !== undefined && match.start !== null &&
           (typeof match.start !== 'string' ||
@@ -671,6 +693,31 @@ function render() {
   elements.resultCount.textContent = `${visibleEvents.length} ${visibleEvents.length === 1 ? 'Eintrag' : 'Einträge'}`;
   elements.list.replaceChildren();
 
+  // Calendar view: only show tournament summary, no individual matches/games
+  if (state.activeTab === 'calendar') {
+    renderTournamentSummary(eventPool);
+    
+      // Count tournaments from the tournament summary (which includes broadcasts)
+      const tournamentNames = new Set();
+      for (const event of eventPool) {
+        if (event.kind === 'tournament' || event.kind === 'broadcast') {
+          tournamentNames.add(event.tournament);
+        }
+      }
+      const noTournaments = tournamentNames.size === 0;
+    elements.empty.hidden = !noTournaments;
+    elements.emptyTitle.textContent = eventPool.length
+      ? 'Keine Turniere im gewählten Zeitraum'
+      : 'Noch keine bestätigten Turniere';
+    elements.emptyCopy.textContent = eventPool.length
+      ? 'Die geladene Quelle enthält keine Turniere in den kommenden zwei Monaten.'
+      : 'Die Daten werden automatisch geladen.';
+    elements.reset.disabled = !state.search && !state.country && !state.tournament;
+    updateSourceStatus();
+    return;
+  }
+
+  // Schedule view (14 days): show individual events grouped by day
   const grouped = new Map();
   for (const event of visibleEvents) {
     const key = event.start.toLocaleDateString('de-DE', { timeZone: localTimeZone });
@@ -701,6 +748,118 @@ function render() {
   updateSourceStatus();
 }
 
+function renderTournamentSummary(eventPool) {
+  // Group events by tournament - include tournament-type events and tournament broadcasts
+  // This ensures the calendar view shows only tournaments without individual matches/sessions
+  const tournamentMap = new Map();
+  for (const event of eventPool) {
+    // Include tournament events and broadcasts (which represent tournament broadcasts)
+    // Exclude sessions and individual match broadcasts
+    if (event.kind !== 'tournament' && event.kind !== 'broadcast') continue;
+    
+    const tournamentName = event.tournament;
+    if (!tournamentMap.has(tournamentName)) {
+      tournamentMap.set(tournamentName, {
+        name: tournamentName,
+        country: event.country,
+        city: event.city,
+        venue: event.venue,
+        start: event.start,
+        stop: event.stop,
+        kind: event.kind,
+        broadcasts: event.broadcasts,
+        matches: event.matches
+      });
+    } else {
+      // Update with earliest start and latest stop
+      const existing = tournamentMap.get(tournamentName);
+      if (event.start < existing.start) existing.start = event.start;
+      if (event.stop && (!existing.stop || event.stop > existing.stop)) existing.stop = event.stop;
+      // Merge broadcasts
+      for (const b of event.broadcasts) {
+        if (!existing.broadcasts.some(eb => eb.territory === b.territory && eb.channel === b.channel)) {
+          existing.broadcasts.push(b);
+        }
+      }
+    }
+  }
+
+  // Sort tournaments by start date
+  const tournaments = Array.from(tournamentMap.values())
+    .sort((a, b) => a.start.getTime() - b.start.getTime());
+
+  if (tournaments.length === 0) return;
+
+  // Create tournament summary section
+  const summarySection = document.createElement('div');
+  summarySection.className = 'tournament-summary-section';
+  
+  const heading = document.createElement('h3');
+  heading.className = 'tournament-summary-heading';
+  heading.textContent = 'Kommende Turniere (nächste 2 Monate)';
+  summarySection.appendChild(heading);
+
+  const list = document.createElement('div');
+  list.className = 'tournament-summary-list';
+
+  for (const tournament of tournaments) {
+    const item = document.createElement('div');
+    item.className = 'tournament-summary-item';
+
+    // Format date range
+    const startStr = eventDateFormat.format(tournament.start);
+    const stopStr = tournament.stop ? eventDateFormat.format(tournament.stop) : '';
+    const dateRange = stopStr && stopStr !== startStr ? `${startStr} – ${stopStr}` : startStr;
+
+        // Look up tournament logo - try exact match first, then partial match
+        let logoUrl = tournamentLogos[tournament.name];
+        if (!logoUrl) {
+          const lowerName = tournament.name.toLowerCase();
+          for (const [key, url] of Object.entries(tournamentLogos)) {
+            if (lowerName.includes(key.toLowerCase())) {
+              logoUrl = url;
+              break;
+            }
+          }
+        }
+        
+        // If no tournament logo found, look for channel/sender logos from broadcasts
+        if (!logoUrl && tournament.broadcasts && tournament.broadcasts.length > 0) {
+          const allowedTerritories = ['Deutschland', 'Österreich', 'Schweiz', 'Niederlande', 'UK'];
+          const relevantBroadcasts = tournament.broadcasts.filter(b => allowedTerritories.includes(b.territory));
+          for (const broadcast of relevantBroadcasts) {
+            const channelName = broadcast.channel;
+            if (channelLogos[channelName]) {
+              logoUrl = channelLogos[channelName];
+              break;
+            }
+            // Also try partial match for channel name
+            for (const [key, url] of Object.entries(channelLogos)) {
+              if (channelName.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(channelName.toLowerCase())) {
+                logoUrl = url;
+                break;
+              }
+            }
+            if (logoUrl) break;
+          }
+        }
+
+    item.innerHTML = `
+      <div class="tournament-summary-date">${dateRange}</div>
+      <div class="tournament-summary-info">
+        <div class="tournament-summary-name-row">
+              ${logoUrl ? `<img class="tournament-summary-logo" src="${logoUrl}" alt="${tournament.name}" loading="lazy">` : ''}
+          <strong class="tournament-summary-name">${tournament.name}</strong>
+        </div>
+      </div>
+    `;
+    list.appendChild(item);
+  }
+
+  summarySection.appendChild(list);
+  elements.list.insertBefore(summarySection, elements.list.firstChild);
+}
+
   function renderRanking() {
     const sortedPlayers = Object.entries(playerWorldRanks)
       .sort((a, b) => a[1] - b[1])
@@ -710,14 +869,19 @@ function render() {
   
     for (const [name, rank] of sortedPlayers) {
       const countryCode = playerCountryCodes[name] || 'XX';
-      const flagUrl = `https://flagcdn.com/16x12/${countryCode.toLowerCase()}.png`;
+          // Use England flag (St George's Cross) instead of UK flag for GB
+          let flagCode = countryCode.toLowerCase();
+          if (countryCode === 'GB') {
+            flagCode = 'gb-eng';
+          }
+          const flagUrl = `https://flagcdn.com/16x12/${flagCode}.png`;
     
       const item = document.createElement('div');
       item.className = 'ranking-item';
       item.innerHTML = `
-        <span class="ranking-rank">${rank}</span>
         <img class="ranking-flag" src="${flagUrl}" alt="${countryCode}" loading="lazy" width="16" height="12">
         <span class="ranking-name">${name}</span>
+        <span class="ranking-rank">${rank}</span>
       `;
       elements.rankingList.appendChild(item);
     }
