@@ -71,13 +71,32 @@ const playerWorldRanks = {
   'Alan Soutar': 44, 'Luke Woodhouse': 45,
   'Richard Veenstra': 46, 'Keane Barry': 47,
   'Jeffrey de Graaf': 48, 'William O\'Connor': 49,
-  'Madars Razma': 51, 'Mickey Mansell': 52,
-  'James Hurrell': 53, 'Karel Sedlacek': 54,
-  'Florian Hempel': 55, 'Berry van Peer': 56,
-  'Ryan Joyce': 57, 'Christian Kist': 58,
-  'Ian White': 59, 'Jose de Sousa': 60,
-  'Stephen Burton': 61, 'Connor Scutt': 62,
-  'Rowby-John Rodriguez': 63, 'Simon Whitlock': 64
+  'Madars Razma': 50, 'Mickey Mansell': 51,
+  'James Hurrell': 52, 'Karel Sedlacek': 53,
+  'Florian Hempel': 54, 'Berry van Peer': 55,
+  'Ryan Joyce': 56, 'Christian Kist': 57,
+  'Ian White': 58, 'Jose de Sousa': 59,
+  'Stephen Burton': 60, 'Connor Scutt': 61,
+  'Rowby-John Rodriguez': 62, 'Simon Whitlock': 63,
+  'Martin Lukeman': 64, 'Ross Montgomery': 65,
+  'Darren Webster': 66, 'Steve Beaton': 67,
+  'Robert Thornton': 68, 'Adrian Lewis': 69,
+  'Neil Duff': 70, 'Andy Hamilton': 71,
+  'Richard North': 72, 'Boris Krcmar': 73,
+  'Leonard Gates': 74, 'Haupai Puha': 75,
+  'Mitchell Clegg': 76, 'Vincent van der Voort': 77,
+  'Martijn Kleermaker': 78, 'Martijn Dragt': 79,
+  'Jamie Hughes': 80, 'Keegan Brown': 81,
+  'Adam Paxton': 82, 'Adam Warner': 83,
+  'Adam Lipscombe': 84, 'Nathan Girvan': 85,
+  'Niko Chamil': 86, 'Ben Townley': 87,
+  'Pat Scurfield': 88, 'Stefan Schroder': 89,
+  'Steph Clarke': 90, 'Aurora Fochesato': 91,
+  'Terry Tan': 92, 'Matt Clark': 93,
+  'Dennis Nilsson': 94, 'Carsten Hoffmann': 95,
+  'Tommy Morris': 96, 'Tom Bissell': 97,
+  'Rob Owen': 98, 'Charlie Manby': 99,
+  'Henry Coates': 100
 };
 const eventDateFormat = new Intl.DateTimeFormat('en-CA', {
   year: 'numeric',
@@ -126,8 +145,12 @@ const elements = {
   periodLabel: document.querySelector('#period-label'),
   scheduleHeading: document.querySelector('#schedule-heading'),
   schedulePanel: document.querySelector('#schedule-panel'),
+  rankingPanel: document.querySelector('#ranking-panel'),
+  rankingList: document.querySelector('#ranking-list'),
+  rankingUpdated: document.querySelector('#ranking-updated'),
   viewSchedule: document.querySelector('#view-schedule'),
   viewCalendar: document.querySelector('#view-calendar'),
+  viewRanking: document.querySelector('#view-ranking'),
   timezoneLabel: document.querySelector('#timezone-label'),
   scheduleTimezone: document.querySelector('#schedule-timezone'),
   statMatches: document.querySelector('#stat-matches'),
@@ -588,7 +611,7 @@ function makeEventCard(event) {
         : event.kind === 'draw' ? 'Anwurfzeit offen' : `Session ab ${timeFormat.format(event.start)}`));
       item.append(
         makePlayer(match.player1, match.country1, match.rank1),
-        makeElement('span', 'event-match-separator', 'vs'),
+        makeElement('span', 'event-match-separator', '-'),
         makePlayer(match.player2, match.country2, match.rank2),
         matchInfo
       );
@@ -675,6 +698,31 @@ function render() {
   updateSourceStatus();
 }
 
+  function renderRanking() {
+    const sortedPlayers = Object.entries(playerWorldRanks)
+      .sort((a, b) => a[1] - b[1])
+      .slice(0, 100);
+  
+    elements.rankingList.replaceChildren();
+  
+    for (const [name, rank] of sortedPlayers) {
+      const countryCode = playerCountryCodes[name] || 'XX';
+      const flagUrl = `https://flagcdn.com/16x12/${countryCode.toLowerCase()}.png`;
+    
+      const item = document.createElement('div');
+      item.className = 'ranking-item';
+      item.innerHTML = `
+        <span class="ranking-rank">${rank}</span>
+        <img class="ranking-flag" src="${flagUrl}" alt="${countryCode}" loading="lazy" width="16" height="12">
+        <span class="ranking-name">${name}</span>
+      `;
+      elements.rankingList.appendChild(item);
+    }
+  
+    const now = new Date();
+    elements.rankingUpdated.textContent = `Stand: ${now.toLocaleDateString('de-DE')} ${now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}`;
+  }
+
 function updateSourceStatus() {
   const retrievedAt = [state.source?.retrievedAt, state.ukSource?.retrievedAt, state.nlSource?.retrievedAt, state.beSource?.retrievedAt, state.tournamentSource?.retrievedAt]
     .filter(value => value instanceof Date && !Number.isNaN(value.getTime()))
@@ -722,19 +770,33 @@ function updateFilters() {
 function setActiveTab(tab) {
   state.activeTab = tab;
   const isCalendar = tab === 'calendar';
+  const isRanking = tab === 'ranking';
+  
   if (isCalendar) {
     state.country = '';
     elements.country.value = '';
   }
-  elements.viewSchedule.classList.toggle('is-active', !isCalendar);
-  elements.viewSchedule.setAttribute('aria-selected', String(!isCalendar));
+  
+  elements.viewSchedule.classList.toggle('is-active', !isCalendar && !isRanking);
+  elements.viewSchedule.setAttribute('aria-selected', String(!isCalendar && !isRanking));
   elements.viewCalendar.classList.toggle('is-active', isCalendar);
   elements.viewCalendar.setAttribute('aria-selected', String(isCalendar));
-  elements.schedulePanel.setAttribute('aria-labelledby', isCalendar ? 'view-calendar' : 'view-schedule');
-  elements.scheduleHeading.textContent = isCalendar ? 'Dartskalender' : 'Der Spielplan';
-  setPeriod();
-  updateFilters();
-  render();
+  elements.viewRanking.classList.toggle('is-active', isRanking);
+  elements.viewRanking.setAttribute('aria-selected', String(isRanking));
+  
+  elements.schedulePanel.hidden = isRanking;
+  elements.rankingPanel.hidden = !isRanking;
+  
+  elements.schedulePanel.setAttribute('aria-labelledby', isCalendar ? 'view-calendar' : isRanking ? 'view-ranking' : 'view-schedule');
+  elements.scheduleHeading.textContent = isCalendar ? 'Dartskalender' : isRanking ? 'Weltrangliste' : 'Der Spielplan';
+  
+  if (isRanking) {
+    renderRanking();
+  } else {
+    setPeriod();
+    updateFilters();
+    render();
+  }
 }
 
 async function loadPayload(payload) {
@@ -870,6 +932,7 @@ function init() {
   });
   elements.viewSchedule.addEventListener('click', () => setActiveTab('schedule'));
   elements.viewCalendar.addEventListener('click', () => setActiveTab('calendar'));
+    elements.viewRanking.addEventListener('click', () => setActiveTab('ranking'));
 
   updateFilters();
   render();
