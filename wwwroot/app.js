@@ -788,7 +788,7 @@ function setActiveTab(tab) {
   elements.rankingPanel.hidden = !isRanking;
   
   elements.schedulePanel.setAttribute('aria-labelledby', isCalendar ? 'view-calendar' : isRanking ? 'view-ranking' : 'view-schedule');
-  elements.scheduleHeading.textContent = isCalendar ? 'Dartskalender' : isRanking ? 'Weltrangliste' : 'Der Spielplan';
+  elements.scheduleHeading.textContent = isCalendar ? 'Dartskalender' : isRanking ? 'Weltrangliste' : 'Dart Events';
   
   if (isRanking) {
     renderRanking();
