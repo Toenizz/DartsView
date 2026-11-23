@@ -80,7 +80,7 @@ h1 span { color: var(--lime); }
 .section-heading .eyebrow { margin-bottom: 6px; }
 h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
 .view-toggle { display: flex; align-items: center; gap: 15px; }
-.view-button { padding: 9px 13px; border: 1px solid #303748; border-radius: 6px; background: #202636; color: var(--text); font-size: 11px; font-weight: 600; }
+.view-button { padding: 9px 13px; border: 1px solid #303748; border-radius: 6px; background: #202636; color: var(--text); font-size: 11px; font-weight: 600; white-space: nowrap; }
 .view-button.is-active { border-color: var(--lime); background: var(--lime); color: var(--background); }
 .view-button:hover:not(.is-active) { border-color: #68724e; }
 .period-label { color: var(--faint); font: 500 9px/1 var(--mono); letter-spacing: .1em; }
@@ -111,9 +111,15 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
 .event-title strong { display: block; margin-bottom: 5px; overflow: hidden; font: 600 13px/1.3 var(--display); text-overflow: ellipsis; white-space: nowrap; }
 .event-title span, .event-stage span, .event-venue span { display: block; color: #8790a0; font-size: 10px; }
 .event-match-list { display: grid; gap: 5px; margin: 8px 0 0; padding: 0; list-style: none; }
-.event-match { display: grid; grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr) minmax(100px, auto); align-items: center; gap: 5px; }
+.event-match { display: grid; grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr) minmax(132px, auto); align-items: center; gap: 5px; }
 .event-match span { overflow-wrap: anywhere; }
 .event-match .event-match-separator { color: var(--lime); font: 500 9px/1 var(--mono); text-align: center; }
+.event-title .event-match-info { display: flex; align-items: center; justify-content: flex-end; gap: 7px; white-space: nowrap; }
+.event-title .event-match-info > span { display: inline-flex; }
+.event-match .event-match-score { color: var(--lime); font: 600 10px/1 var(--mono); }
+.event-match .event-match-status { font: 600 8px/1 var(--mono); letter-spacing: .06em; }
+.event-match .event-match-status--live { color: #ff8b79; }
+.event-match .event-match-status--finished { color: #a4acba; }
 .event-match .event-match-time { color: #a4acba; font: 400 8px/1.2 var(--mono); text-align: right; white-space: nowrap; }
 .event-title .event-match-note { margin-top: 7px; color: #a4acba; font-size: 9px; }
 .event-stage label, .event-venue label { display: block; margin-bottom: 4px; color: #616b7d; font: 500 8px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
@@ -185,7 +191,8 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
   .event-time strong { font-size: 16px; }
   .event-title strong { font-size: 12px; }
   .event-match { grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr); }
-  .event-match .event-match-time { grid-column: 1 / -1; text-align: left; }
+  .event-title .event-match-info { grid-column: 1 / -1; justify-content: flex-start; }
+  .event-match .event-match-time { text-align: left; }
   .event-venue { display: none; }
   .event-link { grid-column: 3; grid-row: 1 / span 2; }
   .schedule-meta { font-size: 9px; }

@@ -128,7 +128,7 @@ internal sealed class DartsviewWebViewClient : WebViewClient
         string key,
         Func<CancellationToken, Task<DartsSchedule>> load)
     {
-        if (Cache.TryGetValue(key, out var cached) && DateTimeOffset.UtcNow - cached.RetrievedAt < CacheDuration)
+        if (Cache.TryGetValue(key, out var cached) && DateTimeOffset.UtcNow < cached.ExpiresAt)
         {
             return cached.Json;
         }
@@ -137,14 +137,18 @@ internal sealed class DartsviewWebViewClient : WebViewClient
         await gate.WaitAsync();
         try
         {
-            if (Cache.TryGetValue(key, out cached) && DateTimeOffset.UtcNow - cached.RetrievedAt < CacheDuration)
+            if (Cache.TryGetValue(key, out cached) && DateTimeOffset.UtcNow < cached.ExpiresAt)
             {
                 return cached.Json;
             }
 
             var schedule = await load(CancellationToken.None);
             var json = JsonSerializer.Serialize(schedule, JsonOptions);
-            Cache[key] = new CachedFeed(json, DateTimeOffset.UtcNow);
+            var retrievedAt = DateTimeOffset.UtcNow;
+            var duration = key == "tournaments"
+                ? Darts1Feed.GetCacheDuration(schedule, retrievedAt)
+                : CacheDuration;
+            Cache[key] = new CachedFeed(json, retrievedAt.Add(duration));
             return json;
         }
         finally
@@ -181,5 +185,5 @@ internal sealed class DartsviewWebViewClient : WebViewClient
             _ => "application/octet-stream"
         };
 
-    private sealed record CachedFeed(string Json, DateTimeOffset RetrievedAt);
+    private sealed record CachedFeed(string Json, DateTimeOffset ExpiresAt);
 }

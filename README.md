@@ -10,7 +10,7 @@ Im Projektordner ausführen:
 dotnet run -- --urls http://localhost:5080
 ```
 
-Danach `http://localhost:5080` im Browser öffnen. Beim Laden der Seite ruft die App die D/A/CH- und UK-XMLTV-GZIP-Feeds sowie den zusätzlichen Turnierkalender automatisch ab. Der Server cached jede Quelle zwei Stunden; die App fragt sie ebenfalls alle zwei Stunden automatisch erneut ab. Eine manuelle Aktualisierung ist zusätzlich möglich.
+Danach `http://localhost:5080` im Browser öffnen. Beim Laden der Seite ruft die App die D/A/CH- und UK-XMLTV-GZIP-Feeds sowie den zusätzlichen Turnierkalender automatisch ab. Die EPG-Feeds werden zwei Stunden zwischengespeichert. Der Turnierkalender wird außerhalb von Spieltagen alle zwei Stunden und an Spieltagen etwa jede Minute aktualisiert; bei Rückkehr zur App wird ebenfalls neu geladen.
 
 ## EPG-Quelle und Abdeckung
 
@@ -18,7 +18,7 @@ Für D/A/CH-TV-Sendungen verwendet die App `https://deswird.org/iptv/GuideFull.x
 
 Für englische Sender wird zusätzlich der UK1-XMLTV-Feed von [EPGSHARE01](https://epgshare01.online/epgshare01/epg_ripper_UK1.xml.gz) geladen. Seine Kanalliste enthält Free-TV und Pay-TV, darunter Sky Sports, TNT Sports und Premier Sports. Laut Anbieter ist der EPG für legale Nutzung vorgesehen; der Feed liefert Programmdaten, keine Streams. Die Abdeckung und Programminformationen können unvollständig sein.
 
-Zusätzlich liest der Server den Darts1.de-Kalender unter `https://www.darts1.de/termine/termine.php` für die dort aufgeführten PDC-, WDF-, DDV- und DSAB-Turniere. Im Dartskalender werden veröffentlichte Sessions und Runden unter anderem für die Players Championship Finals, die Lakeside-WDF-WM, die PDC-WM und die Bahrain Darts Masters ergänzt. Die zusätzlichen Kalenderdaten enthalten keine bestätigten Senderangaben. Diese Abdeckung entspricht dem veröffentlichten Darts1-Kalender und ist keine Garantie für jedes Darts-Turnier in Europa. Beide Quellen werden zwei Stunden zwischengespeichert.
+Zusätzlich liest der Server den Darts1.de-Kalender unter `https://www.darts1.de/termine/termine.php` für die dort aufgeführten PDC-, WDF-, DDV- und DSAB-Turniere. Im Dartskalender werden veröffentlichte Sessions, Paarungen und Spielstände unter anderem für die Players Championship Finals, die Lakeside-WDF-WM, die PDC-WM und die Bahrain Darts Masters ergänzt. Die zusätzlichen Kalenderdaten enthalten keine bestätigten Senderangaben. Diese Abdeckung entspricht dem veröffentlichten Darts1-Kalender und ist keine Garantie für jedes Darts-Turnier in Europa. Die Turnierquelle wird an Spieltagen alle 45 Sekunden und sonst zwei Stunden zwischengespeichert; die App fragt sie während einer Session ungefähr jede Minute ab.
 
 Sender aus beiden EPG-Feeds werden einem Turnier nur bei übereinstimmendem Turniernamen und Veranstaltungstag zugeordnet. Auf den Turnierkarten erscheinen Deutschland, Österreich, Schweiz und England/UK; „keine EPG-Angabe“ bedeutet, dass der jeweilige Feed für dieses Event und Gebiet keinen Sender nennt. Die App leitet daraus keine Übertragungsrechte oder zusätzliche Sender ab. Beide EPG-Feeds werden unabhängig geladen und zwischengespeichert, damit ein Feed-Ausfall den jeweils anderen nicht blockiert.
 

@@ -127,7 +127,7 @@ app.MapGet("/api/tournament-events", async (IMemoryCache cache, CancellationToke
         }
 
         var schedule = await Darts1Feed.LoadAsync(cancellationToken);
-        cache.Set("tournament-events", schedule, TimeSpan.FromHours(2));
+        cache.Set("tournament-events", schedule, Darts1Feed.GetCacheDuration(schedule, DateTimeOffset.UtcNow));
         return Results.Ok(schedule);
     }
     catch (HttpRequestException exception)
@@ -178,7 +178,10 @@ internal sealed record DartsMatch(
     string Player1,
     string Player2,
     string? Start = null,
-    bool IsEstimated = false);
+    bool IsEstimated = false,
+    int? Score1 = null,
+    int? Score2 = null,
+    string? ScoreStatus = null);
 
 internal static class Darts1Feed
 {
@@ -210,15 +213,23 @@ internal static class Darts1Feed
             .Where(index => Regex.IsMatch(playersSessions[index].Stage, @"\b1\.\s*Runde\b", RegexOptions.IgnoreCase))
             .ToArray();
         if (drawnMatches.Count == 32 &&
-            firstRoundSessionIndices.Length == 2 &&
-            firstRoundSessionIndices.All(index => playersSessions[index].Matches is not { Count: > 0 }))
+            firstRoundSessionIndices.Length == 2)
         {
             const int matchesPerSession = 16;
             for (var index = 0; index < firstRoundSessionIndices.Length; index++)
             {
                 var sessionIndex = firstRoundSessionIndices[index];
                 var session = playersSessions[sessionIndex];
-                var sessionMatches = drawnMatches.Skip(index * matchesPerSession).Take(matchesPerSession).ToArray();
+                var existingMatches = session.Matches ?? Array.Empty<DartsMatch>();
+                var existingByKey = existingMatches
+                    .GroupBy(MatchKey, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+                var sessionDraw = drawnMatches.Skip(index * matchesPerSession).Take(matchesPerSession).ToArray();
+                var assignedKeys = sessionDraw.Select(MatchKey).ToHashSet(StringComparer.OrdinalIgnoreCase);
+                var sessionMatches = sessionDraw
+                    .Select(match => existingByKey.TryGetValue(MatchKey(match), out var existing) ? existing : match)
+                    .Concat(existingMatches.Where(match => !assignedKeys.Contains(MatchKey(match))))
+                    .ToArray();
                 playersSessions[sessionIndex] = session with
                 {
                     Matches = EstimateMatchStarts(
@@ -279,6 +290,15 @@ internal static class Darts1Feed
                 DateTimeOffset.UtcNow.ToString("O", CultureInfo.InvariantCulture),
                 "Turniertermine der nächsten zwei Monate und veröffentlichte Sessions; TV-Sender werden nicht ausgewiesen"),
             orderedEvents);
+    }
+
+    internal static TimeSpan GetCacheDuration(DartsSchedule schedule, DateTimeOffset now)
+    {
+        var isMatchDay = schedule.Events.Any(item =>
+            item.Kind == "session" &&
+            DateTimeOffset.TryParse(item.Start, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var sessionStart) &&
+            sessionStart.Date == now.ToOffset(sessionStart.Offset).Date);
+        return isMatchDay ? TimeSpan.FromSeconds(45) : TimeSpan.FromHours(2);
     }
 
     private static async Task<string> GetPageAsync(string url, CancellationToken cancellationToken)
@@ -555,7 +575,8 @@ internal static class Darts1Feed
             .Select((match, index) => match with
             {
                 Start = sessionStart.AddMinutes(index / simultaneousMatches * interval).ToString("O", CultureInfo.InvariantCulture),
-                IsEstimated = true
+                IsEstimated = true,
+                ScoreStatus = GetScoreStatus(match, stage)
             })
             .ToArray();
     }
@@ -582,6 +603,29 @@ internal static class Darts1Feed
         }
 
         return 35;
+    }
+
+    private static string? GetScoreStatus(DartsMatch match, string stage)
+    {
+        if (match.Score1 is not int score1 || match.Score2 is not int score2)
+        {
+            return null;
+        }
+
+        var format = Regex.Match(stage, @"Best of\s+(?<count>\d+)\s+(?<unit>sets?|legs?)", RegexOptions.IgnoreCase);
+        if (!format.Success ||
+            !int.TryParse(format.Groups["count"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var formatLength))
+        {
+            return null;
+        }
+
+        var winningScore = formatLength / 2 + 1;
+        if (score1 >= winningScore || score2 >= winningScore)
+        {
+            return "finished";
+        }
+
+        return score1 + score2 > 0 ? "live" : null;
     }
 
     private static IReadOnlyList<DartsMatch> ParsePlayersChampionshipDraw(string html)
@@ -612,8 +656,24 @@ internal static class Darts1Feed
             foreach (Match row in rows)
             {
                 var cells = Regex.Matches(row.Groups["content"].Value, "<td\\b[^>]*>(?<content>.*?)</td>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                if (cells.Count != 3 ||
-                    !string.Equals(PlainText(cells[1].Groups["content"].Value), "v", StringComparison.OrdinalIgnoreCase))
+                if (cells.Count != 3)
+                {
+                    continue;
+                }
+
+                var scoreText = PlainText(cells[1].Groups["content"].Value);
+                var scoreMatch = Regex.Match(scoreText, @"^(?<score1>\d+)\s*:\s*(?<score2>\d+)$");
+                var isUnplayed = string.Equals(scoreText, "v", StringComparison.OrdinalIgnoreCase);
+                if (!isUnplayed && !scoreMatch.Success)
+                {
+                    continue;
+                }
+
+                var score1 = 0;
+                var score2 = 0;
+                if (scoreMatch.Success &&
+                    (!int.TryParse(scoreMatch.Groups["score1"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out score1) ||
+                     !int.TryParse(scoreMatch.Groups["score2"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out score2)))
                 {
                     continue;
                 }
@@ -622,7 +682,12 @@ internal static class Darts1Feed
                 var player2 = PlainText(cells[2].Groups["content"].Value);
                 if (!string.IsNullOrWhiteSpace(player1) && !string.IsNullOrWhiteSpace(player2))
                 {
-                    matches.Add(new DartsMatch(player1, player2));
+                    var hasScore = scoreMatch.Success && (score1 > 0 || score2 > 0);
+                    matches.Add(new DartsMatch(
+                        player1,
+                        player2,
+                        Score1: hasScore ? score1 : null,
+                        Score2: hasScore ? score2 : null));
                 }
             }
         }

@@ -67,7 +67,11 @@ const elements = {
 
 function setPeriod() {
   const start = new Date();
+  const scheduleEnd = new Date(start.getTime() + MAX_DAYS * DAY_MS);
   const end = new Date(start);
+  const scheduleDateRange = `${formatTabDate(start)} - ${formatTabDate(scheduleEnd)}`;
+  elements.viewSchedule.textContent = scheduleDateRange;
+  elements.viewSchedule.setAttribute('aria-label', `Alle Termine, ${scheduleDateRange}`);
   if (state.activeTab === 'calendar') {
     const day = end.getDate();
     end.setDate(1);
@@ -76,7 +80,7 @@ function setPeriod() {
     elements.dateRangeCaption.textContent = 'DEIN 2-MONATS-KALENDER';
     elements.periodLabel.textContent = 'NÄCHSTE 2 MONATE';
   } else {
-    end.setTime(end.getTime() + MAX_DAYS * DAY_MS);
+    end.setTime(scheduleEnd.getTime());
     elements.dateRangeCaption.textContent = 'DEIN 14-TAGE-PLAN';
     elements.periodLabel.textContent = 'NÄCHSTE 14 TAGE';
   }
@@ -84,6 +88,10 @@ function setPeriod() {
   elements.timezoneLabel.textContent = localTimeZone.replaceAll('_', ' ');
   elements.scheduleTimezone.textContent = localTimeZone.replaceAll('_', ' ');
   document.querySelector('#footer-year').textContent = String(start.getFullYear());
+}
+
+function formatTabDate(date) {
+  return `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.`;
 }
 
 function safeUrl(value) {
@@ -154,6 +162,17 @@ function validateSchedule(payload) {
       if (match.isEstimated !== undefined && typeof match.isEstimated !== 'boolean') {
         throw new Error(`Eintrag ${index + 1}: „isEstimated“ muss ein boolescher Wert sein.`);
       }
+      const hasScore1 = match.score1 !== undefined && match.score1 !== null;
+      const hasScore2 = match.score2 !== undefined && match.score2 !== null;
+      if (hasScore1 !== hasScore2 ||
+          (hasScore1 && (!Number.isInteger(match.score1) || match.score1 < 0 ||
+                         !Number.isInteger(match.score2) || match.score2 < 0))) {
+        throw new Error(`Eintrag ${index + 1}: Ein Spielstand muss aus zwei gültigen Zahlen bestehen.`);
+      }
+      if (match.scoreStatus !== undefined && match.scoreStatus !== null &&
+          !['live', 'finished'].includes(match.scoreStatus)) {
+        throw new Error(`Eintrag ${index + 1}: „scoreStatus“ ist ungültig.`);
+      }
     }
 
     const stop = event.stop ? new Date(event.stop) : null;
@@ -176,7 +195,10 @@ function validateSchedule(payload) {
         player1: match.player1.trim(),
         player2: match.player2.trim(),
         start: match.start ? new Date(match.start) : null,
-        isEstimated: match.isEstimated === true
+        isEstimated: match.isEstimated === true,
+        score1: match.score1 ?? null,
+        score2: match.score2 ?? null,
+        scoreStatus: match.scoreStatus ?? null
       })),
       timingNote: typeof event.timingNote === 'string' ? event.timingNote : '',
       sourceUrl: safeUrl(event.sourceUrl),
@@ -355,13 +377,23 @@ function makeEventCard(event) {
     const matchList = makeElement('ul', 'event-match-list');
     for (const match of event.matches) {
       const item = makeElement('li', 'event-match');
+      const matchInfo = makeElement('span', 'event-match-info');
+      if (match.score1 !== null && match.score2 !== null) {
+        matchInfo.append(makeElement('span', 'event-match-score', `${match.score1}:${match.score2}`));
+        if (match.scoreStatus === 'live') {
+          matchInfo.append(makeElement('span', 'event-match-status event-match-status--live', 'LIVE'));
+        } else if (match.scoreStatus === 'finished') {
+          matchInfo.append(makeElement('span', 'event-match-status event-match-status--finished', 'Endstand'));
+        }
+      }
+      matchInfo.append(makeElement('span', 'event-match-time', match.start && match.isEstimated
+        ? `ca. ${timeFormat.format(match.start)}`
+        : event.kind === 'draw' ? 'Anwurfzeit offen' : `Session ab ${timeFormat.format(event.start)}`));
       item.append(
         makeElement('span', '', match.player1),
         makeElement('span', 'event-match-separator', 'vs'),
         makeElement('span', '', match.player2),
-        makeElement('span', 'event-match-time', match.start && match.isEstimated
-          ? `ca. ${timeFormat.format(match.start)}`
-          : event.kind === 'draw' ? 'Anwurfzeit offen' : `Session ab ${timeFormat.format(event.start)}`)
+        matchInfo
       );
       matchList.append(item);
     }
@@ -447,7 +479,9 @@ function render() {
 }
 
 function updateSourceStatus() {
-  const retrievedAt = state.source?.retrievedAt || state.ukSource?.retrievedAt || state.tournamentSource?.retrievedAt;
+  const retrievedAt = [state.source?.retrievedAt, state.ukSource?.retrievedAt, state.tournamentSource?.retrievedAt]
+    .filter(value => value instanceof Date && !Number.isNaN(value.getTime()))
+    .sort((left, right) => right.getTime() - left.getTime())[0];
   const freshness = retrievedAt && !Number.isNaN(retrievedAt.getTime())
     ? dateTimeFormat.format(retrievedAt)
     : 'Zeitpunkt nicht angegeben';
@@ -513,7 +547,11 @@ async function loadPayload(payload) {
   render();
 }
 
+let tournamentRefreshInFlight = false;
+
 async function loadTournamentEvents() {
+  if (tournamentRefreshInFlight) return;
+  tournamentRefreshInFlight = true;
   try {
     const response = await fetch('/api/tournament-events', { headers: { Accept: 'application/json' } });
     if (!response.ok) throw new Error(`Turnierkalender: HTTP ${response.status}.`);
@@ -523,9 +561,18 @@ async function loadTournamentEvents() {
     state.tournamentError = '';
   } catch (error) {
     state.tournamentError = error instanceof Error ? error.message : 'Der Turnierkalender konnte nicht geladen werden.';
+  } finally {
+    tournamentRefreshInFlight = false;
   }
   updateFilters();
   render();
+}
+
+function hasMatchSessionToday() {
+  const today = eventDateFormat.format(new Date());
+  return state.tournamentEvents.some(event =>
+    event.kind === 'session' && eventDateFormat.format(event.start) === today
+  );
 }
 
 async function loadUkSchedule() {
@@ -595,6 +642,14 @@ function init() {
 
   updateFilters();
   render();
+  window.setInterval(() => {
+    if (location.protocol === 'http:' || location.protocol === 'https:') {
+      if (hasMatchSessionToday()) loadTournamentEvents();
+    }
+  }, 60 * 1000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && hasMatchSessionToday()) loadTournamentEvents();
+  });
   window.setInterval(() => {
     setPeriod();
     if (state.feedUrl) loadFeed(state.feedUrl);
