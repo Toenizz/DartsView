@@ -29,6 +29,7 @@ public sealed class MainActivity : Activity
         browser.Settings.DomStorageEnabled = true;
         browser.Settings.AllowFileAccess = false;
         browser.Settings.AllowContentAccess = false;
+        browser.Settings.CacheMode = CacheModes.NoCache;
         browser.SetWebViewClient(new DartsviewWebViewClient(this));
         SetContentView(browser);
 
@@ -95,7 +96,8 @@ internal sealed class DartsviewWebViewClient : WebViewClient
         {
             var assetPath = string.IsNullOrEmpty(path) ? "wwwroot/index.html" : $"wwwroot/{path}";
             var asset = assets.Open(assetPath);
-            return new WebResourceResponse(ContentTypeFor(path), "UTF-8", asset);
+            var headers = new Dictionary<string, string> { ["Cache-Control"] = "no-store" };
+            return new WebResourceResponse(ContentTypeFor(path), "UTF-8", 200, "OK", headers, asset);
         }
         catch (Java.IO.FileNotFoundException)
         {

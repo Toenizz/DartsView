@@ -5,8 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationId>de.toenizz.dartsview</ApplicationId>
-    <ApplicationVersion>5</ApplicationVersion>
-    <ApplicationDisplayVersion>0.1.6</ApplicationDisplayVersion>
+    <ApplicationVersion>6</ApplicationVersion>
+    <ApplicationDisplayVersion>0.1.7</ApplicationDisplayVersion>
     <SupportedOSPlatformVersion>23.0</SupportedOSPlatformVersion>
     <AndroidManifest>AndroidManifest.xml</AndroidManifest>
   </PropertyGroup>
