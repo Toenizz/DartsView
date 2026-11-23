@@ -20,6 +20,8 @@ app.UseStaticFiles();
 
 var refreshLock = new SemaphoreSlim(1, 1);
 var ukRefreshLock = new SemaphoreSlim(1, 1);
+var nlRefreshLock = new SemaphoreSlim(1, 1);
+var beRefreshLock = new SemaphoreSlim(1, 1);
 var tournamentRefreshLock = new SemaphoreSlim(1, 1);
 app.MapGet("/api/schedule", async (IMemoryCache cache, CancellationToken cancellationToken) =>
 {
@@ -111,6 +113,96 @@ app.MapGet("/api/schedule-uk", async (IMemoryCache cache, CancellationToken canc
     }
 });
 
+app.MapGet("/api/schedule-nl", async (IMemoryCache cache, CancellationToken cancellationToken) =>
+{
+    if (cache.TryGetValue("xmltv-schedule-nl", out DartsSchedule? cached) && cached is not null)
+    {
+        return Results.Ok(cached);
+    }
+
+    await nlRefreshLock.WaitAsync(cancellationToken);
+    try
+    {
+        if (cache.TryGetValue("xmltv-schedule-nl", out cached) && cached is not null)
+        {
+            return Results.Ok(cached);
+        }
+
+        var schedule = await XmltvFeed.LoadNetherlandsAsync(cancellationToken);
+        cache.Set("xmltv-schedule-nl", schedule, TimeSpan.FromHours(2));
+        return Results.Ok(schedule);
+    }
+    catch (HttpRequestException exception)
+    {
+        app.Logger.LogError(exception, "The Netherlands XMLTV source could not be reached.");
+        return Results.Problem("Die NL-XMLTV-Quelle ist nicht erreichbar.", statusCode: (int)HttpStatusCode.BadGateway);
+    }
+    catch (TaskCanceledException exception) when (!cancellationToken.IsCancellationRequested)
+    {
+        app.Logger.LogError(exception, "The Netherlands XMLTV source request timed out.");
+        return Results.Problem("Der Abruf der NL-XMLTV-Quelle hat zu lange gedauert.", statusCode: (int)HttpStatusCode.GatewayTimeout);
+    }
+    catch (InvalidDataException exception)
+    {
+        app.Logger.LogError(exception, "The Netherlands XMLTV source returned invalid compressed data.");
+        return Results.Problem("Die NL-XMLTV-Datei ist ungültig oder zu groß.", statusCode: (int)HttpStatusCode.BadGateway);
+    }
+    catch (XmlException exception)
+    {
+        app.Logger.LogError(exception, "The Netherlands XMLTV document could not be parsed.");
+        return Results.Problem("Das NL-XMLTV-Dokument konnte nicht gelesen werden.", statusCode: (int)HttpStatusCode.BadGateway);
+    }
+    finally
+    {
+        nlRefreshLock.Release();
+    }
+});
+
+app.MapGet("/api/schedule-be", async (IMemoryCache cache, CancellationToken cancellationToken) =>
+{
+    if (cache.TryGetValue("xmltv-schedule-be", out DartsSchedule? cached) && cached is not null)
+    {
+        return Results.Ok(cached);
+    }
+
+    await beRefreshLock.WaitAsync(cancellationToken);
+    try
+    {
+        if (cache.TryGetValue("xmltv-schedule-be", out cached) && cached is not null)
+        {
+            return Results.Ok(cached);
+        }
+
+        var schedule = await XmltvFeed.LoadBelgiumAsync(cancellationToken);
+        cache.Set("xmltv-schedule-be", schedule, TimeSpan.FromHours(2));
+        return Results.Ok(schedule);
+    }
+    catch (HttpRequestException exception)
+    {
+        app.Logger.LogError(exception, "The Belgium XMLTV source could not be reached.");
+        return Results.Problem("Die BE-XMLTV-Quelle ist nicht erreichbar.", statusCode: (int)HttpStatusCode.BadGateway);
+    }
+    catch (TaskCanceledException exception) when (!cancellationToken.IsCancellationRequested)
+    {
+        app.Logger.LogError(exception, "The Belgium XMLTV source request timed out.");
+        return Results.Problem("Der Abruf der BE-XMLTV-Quelle hat zu lange gedauert.", statusCode: (int)HttpStatusCode.GatewayTimeout);
+    }
+    catch (InvalidDataException exception)
+    {
+        app.Logger.LogError(exception, "The Belgium XMLTV source returned invalid compressed data.");
+        return Results.Problem("Die BE-XMLTV-Datei ist ungültig oder zu groß.", statusCode: (int)HttpStatusCode.BadGateway);
+    }
+    catch (XmlException exception)
+    {
+        app.Logger.LogError(exception, "The Belgium XMLTV document could not be parsed.");
+        return Results.Problem("Das BE-XMLTV-Dokument konnte nicht gelesen werden.", statusCode: (int)HttpStatusCode.BadGateway);
+    }
+    finally
+    {
+        beRefreshLock.Release();
+    }
+});
+
 app.MapGet("/api/tournament-events", async (IMemoryCache cache, CancellationToken cancellationToken) =>
 {
     if (cache.TryGetValue("tournament-events", out DartsSchedule? cached) && cached is not null)
@@ -181,7 +273,9 @@ internal sealed record DartsMatch(
     bool IsEstimated = false,
     int? Score1 = null,
     int? Score2 = null,
-    string? ScoreStatus = null);
+    string? ScoreStatus = null,
+    string? Country1 = null,
+    string? Country2 = null);
 
 internal static class Darts1Feed
 {
@@ -686,6 +780,8 @@ internal static class Darts1Feed
                     matches.Add(new DartsMatch(
                         player1,
                         player2,
+                        Country1: GetPlayerCountryCode(player1),
+                        Country2: GetPlayerCountryCode(player2),
                         Score1: hasScore ? score1 : null,
                         Score2: hasScore ? score2 : null));
                 }
@@ -693,6 +789,113 @@ internal static class Darts1Feed
         }
 
         return matches;
+    }
+
+    private static string? GetPlayerCountryCode(string playerName)
+    {
+        var countries = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Luke Littler"] = "GB",
+            ["Luke Humphries"] = "GB",
+            ["Michael van Gerwen"] = "NL",
+            ["Gian van Veen"] = "NL",
+            ["Danny Noppert"] = "NL",
+            ["Michael Smith"] = "GB",
+            ["Nathan Aspinall"] = "GB",
+            ["Chris Dobey"] = "GB",
+            ["Rob Cross"] = "GB",
+            ["Stephen Bunting"] = "GB",
+            ["James Wade"] = "GB",
+            ["Dave Chisnall"] = "GB",
+            ["Peter Wright"] = "GB",
+            ["Ryan Searle"] = "GB",
+            ["Ross Smith"] = "GB",
+            ["Gerwyn Price"] = "GB",
+            ["Jonny Clayton"] = "GB",
+            ["Gary Anderson"] = "GB",
+            ["Damon Heta"] = "AU",
+            ["Simon Whitlock"] = "AU",
+            ["Martin Schindler"] = "DE",
+            ["Ricardo Pietreczko"] = "DE",
+            ["Florian Hempel"] = "DE",
+            ["Gabriel Clemens"] = "DE",
+            ["Niko Springer"] = "DE",
+            ["Dirk van Duijvenbode"] = "NL",
+            ["Jermaine Wattimena"] = "NL",
+            ["Raymond van Barneveld"] = "NL",
+            ["Wessel Nijman"] = "NL",
+            ["Kevin Doets"] = "NL",
+            ["Christian Kist"] = "NL",
+            ["Josh Rock"] = "GB",
+            ["Daryl Gurney"] = "GB",
+            ["Brendan Dolan"] = "GB",
+            ["Mike De Decker"] = "BE",
+            ["Dimitri Van den Bergh"] = "BE",
+            ["Kim Huybrechts"] = "BE",
+            ["Krzysztof Ratajski"] = "PL",
+            ["Mensur Suljovic"] = "AT",
+            ["Rowby-John Rodriguez"] = "AT",
+            ["Joe Cullen"] = "GB",
+            ["Cameron Menzies"] = "GB",
+            ["Alan Soutar"] = "GB",
+            ["Callan Rydz"] = "GB",
+            ["Andrew Gilding"] = "GB",
+            ["Ritchie Edhouse"] = "GB",
+            ["Scott Williams"] = "GB",
+            ["Jose de Sousa"] = "PT",
+            ["Beau Greaves"] = "GB",
+            ["Charlie Manby"] = "GB",
+            ["Henry Coates"] = "GB",
+            ["Tom Bissell"] = "GB",
+            ["Rob Owen"] = "GB",
+            ["Luke Woodhouse"] = "GB",
+            ["Alexander Merkx"] = "NL",
+            ["Max Hopp"] = "DE",
+            ["Sebastian Bialecki"] = "PL",
+            ["Jeffrey de Graaf"] = "SE",
+            ["Keane Barry"] = "IE",
+            ["William O'Connor"] = "IE",
+            ["James Hurrell"] = "GB",
+            ["Tommy Morris"] = "GB",
+            ["Carsten Hoffmann"] = "DE",
+            ["Dennis Nilsson"] = "SE",
+            ["Matt Clark"] = "GB",
+            ["Terry Tan"] = "SG",
+            ["Franko Giuliani"] = "IT",
+            ["Joey Lynaugh"] = "IE",
+            ["Jeff Smith"] = "CA",
+            ["David Davies"] = "GB",
+            ["Petri Rasmus"] = "FI",
+            ["Ryusei Azemoto"] = "JP",
+            ["Harry Lane"] = "GB",
+            ["Declan Bailey"] = "GB",
+            ["Richard Veenstra"] = "NL",
+            ["Cristo Reyes"] = "ES",
+            ["Darius Labanauskas"] = "LT",
+            ["Darryl Pilgrim"] = "GB",
+            ["Connor Scutt"] = "GB",
+            ["Tom Sykes"] = "GB",
+            ["Maik Kuivenhoven"] = "NL",
+            ["Bradley Brooks"] = "GB",
+            ["Joe Hunt"] = "GB",
+            ["Karel Sedlacek"] = "CZ",
+            ["Mickey Mansell"] = "GB",
+            ["Aurora Fochesato"] = "IT",
+            ["Steph Clarke"] = "CA",
+            ["Stefan Schroder"] = "DE",
+            ["Pat Scurfield"] = "GB",
+            ["Ben Townley"] = "GB",
+            ["Niels Zonneveld"] = "NL",
+            ["Berry Pater"] = "NL",
+            ["Jitse Van der Wal"] = "NL",
+            ["Corne Groeneveld"] = "NL",
+            ["Leonard Gates"] = "US",
+            ["Haupai Puha"] = "NZ",
+            ["Neil Duff"] = "GB",
+            ["Ross Montgomery"] = "GB"
+        };
+
+        return countries.TryGetValue(playerName.Trim(), out var countryCode) ? countryCode : null;
     }
 
     private static string MatchKey(DartsMatch match)
@@ -733,8 +936,12 @@ internal sealed class XmltvFeed
 {
     private const string FeedUrl = "https://deswird.org/iptv/GuideFull.xml.gz";
     private const string UkFeedUrl = "https://epgshare01.online/epgshare01/epg_ripper_UK1.xml.gz";
+    private const string NetherlandsFeedUrl = "https://epgshare01.online/epgshare01/epg_ripper_NL1.xml.gz";
+    private const string BelgiumFeedUrl = "https://epgshare01.online/epgshare01/epg_ripper_BE2.xml.gz";
     private const int MaxCompressedBytes = 32 * 1024 * 1024;
     private const int MaxUkCompressedBytes = 4 * 1024 * 1024;
+    private const int MaxNetherlandsCompressedBytes = 4 * 1024 * 1024;
+    private const int MaxBelgiumCompressedBytes = 12 * 1024 * 1024;
     private const long MaxXmlCharacters = 512_000_000;
     private static readonly HttpClient Client = new(new HttpClientHandler
     {
@@ -758,6 +965,22 @@ internal sealed class XmltvFeed
             "EPGSHARE01 XMLTV · UK1",
             "Vereinigtes Königreich; Free-TV- und Pay-TV-Kanäle laut UK1-Kanalliste",
             MaxUkCompressedBytes,
+            cancellationToken);
+
+    public static Task<DartsSchedule> LoadNetherlandsAsync(CancellationToken cancellationToken) =>
+        LoadFeedAsync(
+            NetherlandsFeedUrl,
+            "EPGSHARE01 XMLTV · NL1",
+            "Niederlande; Kanäle laut NL1-Kanalliste",
+            MaxNetherlandsCompressedBytes,
+            cancellationToken);
+
+    public static Task<DartsSchedule> LoadBelgiumAsync(CancellationToken cancellationToken) =>
+        LoadFeedAsync(
+            BelgiumFeedUrl,
+            "EPGSHARE01 XMLTV · BE2",
+            "Belgien; Kanäle laut BE2-Kanalliste",
+            MaxBelgiumCompressedBytes,
             cancellationToken);
 
     private static async Task<DartsSchedule> LoadFeedAsync(
@@ -966,7 +1189,7 @@ internal sealed class XmltvFeed
 
     private static string TerritoryFor(string channelId)
     {
-        var match = Regex.Match(channelId, @"(?:^|[.\-_])(de|at|ch|uk|gb|us)(?:$|[.\-_])", RegexOptions.IgnoreCase);
+        var match = Regex.Match(channelId, @"(?:^|[.\-_])(de|at|ch|uk|gb|nl|be|us)(?:$|[.\-_])", RegexOptions.IgnoreCase);
         if (!match.Success)
         {
             return "D/A/CH-Feed · Gebiet nicht ausgewiesen";
@@ -978,6 +1201,8 @@ internal sealed class XmltvFeed
             "at" => "Österreich",
             "ch" => "Schweiz",
             "uk" or "gb" => "Vereinigtes Königreich",
+            "nl" => "Niederlande",
+            "be" => "Belgien",
             "us" => "USA",
             _ => "Gebiet nicht ausgewiesen"
         };

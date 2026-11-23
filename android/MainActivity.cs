@@ -71,6 +71,16 @@ internal sealed class DartsviewWebViewClient : WebViewClient
             return GetFeedResponse("xmltv-uk", XmltvFeed.LoadUkAsync);
         }
 
+        if (path.Equals("api/schedule-nl", StringComparison.OrdinalIgnoreCase))
+        {
+            return GetFeedResponse("xmltv-nl", XmltvFeed.LoadNetherlandsAsync);
+        }
+
+        if (path.Equals("api/schedule-be", StringComparison.OrdinalIgnoreCase))
+        {
+            return GetFeedResponse("xmltv-be", XmltvFeed.LoadBelgiumAsync);
+        }
+
         if (path.Equals("api/tournament-events", StringComparison.OrdinalIgnoreCase))
         {
             return GetFeedResponse("tournaments", Darts1Feed.LoadAsync);

@@ -6,6 +6,79 @@ const dateFormat = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-
 const weekdayFormat = new Intl.DateTimeFormat('de-DE', { weekday: 'long', day: '2-digit', month: 'long' });
 const timeFormat = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: localTimeZone });
 const dateTimeFormat = new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium', timeStyle: 'short', timeZone: localTimeZone });
+const playerCountryCodes = {
+  'Luke Littler': 'GB', 'Luke Humphries': 'GB', 'Michael van Gerwen': 'NL',
+  'Gian van Veen': 'NL', 'Danny Noppert': 'NL', 'Michael Smith': 'GB',
+  'Nathan Aspinall': 'GB', 'Chris Dobey': 'GB', 'Rob Cross': 'GB',
+  'Stephen Bunting': 'GB', 'James Wade': 'GB', 'Dave Chisnall': 'GB',
+  'Peter Wright': 'GB', 'Ryan Searle': 'GB', 'Ross Smith': 'GB',
+  'Gerwyn Price': 'GB', 'Jonny Clayton': 'GB', 'Damon Heta': 'AU',
+  'Gary Anderson': 'GB', 'Martin Schindler': 'DE', 'Ricardo Pietreczko': 'DE',
+  'Florian Hempel': 'DE', 'Gabriel Clemens': 'DE', 'Niko Springer': 'DE',
+  'Dirk van Duijvenbode': 'NL', 'Jermaine Wattimena': 'NL', 'Raymond van Barneveld': 'NL',
+  'Wessel Nijman': 'NL', 'Kevin Doets': 'NL', 'Christian Kist': 'NL',
+  'Josh Rock': 'GB', 'Daryl Gurney': 'GB', 'Brendan Dolan': 'GB',
+  'Mike De Decker': 'BE', 'Dimitri Van den Bergh': 'BE', 'Kim Huybrechts': 'BE',
+  'Peter Jr': 'AU', 'Simon Whitlock': 'AU', 'Joe Cullen': 'GB',
+  'Cameron Menzies': 'GB', 'Alan Soutar': 'GB', 'Callan Rydz': 'GB',
+  'Andrew Gilding': 'GB', 'Ritchie Edhouse': 'GB', 'Scott Williams': 'GB',
+  'Krzysztof Ratajski': 'PL', 'Mensur Suljovic': 'AT', 'Rowby-John Rodriguez': 'AT',
+  'Jerome Shipley': 'AT', 'Jose de Sousa': 'PT',
+  'Beau Greaves': 'GB', 'Charlie Manby': 'GB', 'Henry Coates': 'GB',
+  'Tom Bissell': 'GB', 'Rob Owen': 'GB', 'Luke Woodhouse': 'GB',
+  'Alexander Merkx': 'NL', 'Max Hopp': 'DE', 'Sebastian Bialecki': 'PL',
+  'Jeffrey de Graaf': 'SE', 'Keane Barry': 'IE', 'William O\'Connor': 'IE',
+  'James Hurrell': 'GB', 'Tommy Morris': 'GB', 'Carsten Hoffmann': 'DE',
+  'Dennis Nilsson': 'SE', 'Matt Clark': 'GB', 'Terry Tan': 'SG',
+  'Franko Giuliani': 'IT', 'Joey Lynaugh': 'IE', 'Jeff Smith': 'CA',
+  'David Davies': 'GB', 'Petri Rasmus': 'FI', 'Ryusei Azemoto': 'JP',
+  'Harry Lane': 'GB', 'Declan Bailey': 'GB', 'Chris Dobey': 'GB',
+  'Richard Veenstra': 'NL', 'Cristo Reyes': 'ES', 'Darius Labanauskas': 'LT',
+  'Darryl Pilgrim': 'GB', 'Connor Scutt': 'GB', 'Luke Littler': 'GB',
+  'Tom Sykes': 'GB', 'Maik Kuivenhoven': 'NL', 'Bradley Brooks': 'GB',
+  'Joe Hunt': 'GB', 'Karel Sedlacek': 'CZ', 'Mickey Mansell': 'GB',
+  'Aurora Fochesato': 'IT', 'Steph Clarke': 'CA', 'Stefan Schroder': 'DE',
+  'Pat Scurfield': 'GB', 'Ben Townley': 'GB', 'Niels Zonneveld': 'NL',
+  'Berry Pater': 'NL', 'Jitse Van der Wal': 'NL', 'Corne Groeneveld': 'NL',
+  'Cali West': 'US', 'Cam Crabtree': 'GB', 'Leonard Gates': 'US',
+  'Boris Krcmar': 'HR', 'Niko Chamil': 'DE', 'Nathan Girvan': 'GB',
+  'Adam Lipscombe': 'GB', 'Adam Warner': 'GB', 'Adam Paxton': 'GB',
+  'Jamie Hughes': 'GB', 'Ian White': 'GB', 'Keegan Brown': 'GB',
+  'Martijn Dragt': 'NL', 'Martijn Kleermaker': 'NL', 'Vincent van der Voort': 'NL',
+  'Haupai Puha': 'NZ', 'Mitchell Clegg': 'NZ', 'Neil Duff': 'GB',
+  'Ross Montgomery': 'GB', 'Richard North': 'GB', 'Andy Hamilton': 'GB',
+  'Darren Webster': 'GB', 'Adrian Lewis': 'GB', 'Steve Beaton': 'GB',
+  'Robert Thornton': 'GB', 'Brentford': 'GB'
+};
+const playerWorldRanks = {
+  'Luke Humphries': 1, 'Luke Littler': 2, 'Michael van Gerwen': 3,
+  'Stephen Bunting': 4, 'Josh Rock': 5, 'James Wade': 6,
+  'Gerwyn Price': 7, 'Chris Dobey': 8, 'Jonny Clayton': 9,
+  'Nathan Aspinall': 10, 'Gary Anderson': 11, 'Rob Cross': 12,
+  'Dave Chisnall': 13, 'Damon Heta': 14, 'Danny Noppert': 15,
+  'Ross Smith': 16, 'Ryan Searle': 17, 'Peter Wright': 18,
+  'Mike De Decker': 19, 'Dimitri Van den Bergh': 20,
+  'Jermaine Wattimena': 21, 'Krzysztof Ratajski': 22,
+  'Martin Schindler': 23, 'Michael Smith': 24, 'Gian van Veen': 25,
+  'Wessel Nijman': 26, 'Dirk van Duijvenbode': 27,
+  'Raymond van Barneveld': 28, 'Daryl Gurney': 29,
+  'Ricardo Pietreczko': 30, 'Brendan Dolan': 31,
+  'Cameron Menzies': 32, 'Kevin Doets': 33, 'Mensur Suljovic': 34,
+  'Andrew Gilding': 35, 'Gabriel Clemens': 36, 'Joe Cullen': 37,
+  'Ritchie Edhouse': 38, 'Scott Williams': 39,
+  'Callan Rydz': 40, 'Niels Zonneveld': 41,
+  'Niko Springer': 42, 'Kim Huybrechts': 43,
+  'Alan Soutar': 44, 'Luke Woodhouse': 45,
+  'Richard Veenstra': 46, 'Keane Barry': 47,
+  'Jeffrey de Graaf': 48, 'William O\'Connor': 49,
+  'Madars Razma': 51, 'Mickey Mansell': 52,
+  'James Hurrell': 53, 'Karel Sedlacek': 54,
+  'Florian Hempel': 55, 'Berry van Peer': 56,
+  'Ryan Joyce': 57, 'Christian Kist': 58,
+  'Ian White': 59, 'Jose de Sousa': 60,
+  'Stephen Burton': 61, 'Connor Scutt': 62,
+  'Rowby-John Rodriguez': 63, 'Simon Whitlock': 64
+};
 const eventDateFormat = new Intl.DateTimeFormat('en-CA', {
   year: 'numeric',
   month: '2-digit',
@@ -16,7 +89,9 @@ const broadcastRegions = [
   { label: 'Deutschland', territories: ['Deutschland'] },
   { label: 'Österreich', territories: ['Österreich'] },
   { label: 'Schweiz', territories: ['Schweiz'] },
-  { label: 'England/UK', territories: ['England', 'UK', 'United Kingdom', 'Vereinigtes Königreich'] }
+  { label: 'England/UK', territories: ['England', 'UK', 'United Kingdom', 'Vereinigtes Königreich'] },
+  { label: 'Niederlande', territories: ['Niederlande'] },
+  { label: 'Belgien', territories: ['Belgien'] }
 ];
 const storedFeedUrl = localStorage.getItem('dartsview-feed-url') || '';
 const localApiUrl = location.protocol === 'http:' || location.protocol === 'https:' ? '/api/schedule' : '';
@@ -25,9 +100,13 @@ const xmltvFeedUrl = 'https://deswird.org/iptv/GuideFull.xml.gz';
 const state = {
   events: [],
   ukEvents: [],
+  nlEvents: [],
+  beEvents: [],
   tournamentEvents: [],
   source: null,
   ukSource: null,
+  nlSource: null,
+  beSource: null,
   tournamentSource: null,
   search: '',
   country: '',
@@ -36,6 +115,8 @@ const state = {
   feedUrl: storedFeedUrl || localApiUrl,
   refreshError: '',
   ukError: '',
+  nlError: '',
+  beError: '',
   tournamentError: ''
 };
 
@@ -194,6 +275,10 @@ function validateSchedule(payload) {
       matches: matches.map(match => ({
         player1: match.player1.trim(),
         player2: match.player2.trim(),
+        country1: typeof match.country1 === 'string' ? match.country1.trim().toUpperCase() : '',
+        country2: typeof match.country2 === 'string' ? match.country2.trim().toUpperCase() : '',
+        rank1: Number.isInteger(match.rank1) ? match.rank1 : null,
+        rank2: Number.isInteger(match.rank2) ? match.rank2 : null,
         start: match.start ? new Date(match.start) : null,
         isEstimated: match.isEstimated === true,
         score1: match.score1 ?? null,
@@ -228,7 +313,7 @@ function getAllEvents() {
 }
 
 function getEpgEvents() {
-  return [...state.events, ...state.ukEvents];
+  return [...state.events, ...state.ukEvents, ...state.nlEvents, ...state.beEvents];
 }
 
 function getLocalDateKey(date) {
@@ -240,6 +325,7 @@ function getLocalDateKey(date) {
 function normalizeTournamentName(value) {
   return value
     .toLocaleLowerCase('de')
+    .replace(/\bdarts?[\s-]*(?:wm|weltmeisterschaft)\b/g, ' world championship ')
     .replace(/\b(?:pdc|wdf|ddv|dsab|darts?)\b/g, ' ')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
@@ -326,6 +412,117 @@ function makeElement(tag, className, text) {
   return element;
 }
 
+function countryCodeForPlayer(playerName, suppliedCode) {
+  const code = (suppliedCode || '').trim().toUpperCase();
+  if (/^[A-Z]{2}$/.test(code)) return code;
+  return playerCountryCodes[playerName] || '';
+}
+
+function makeCountryFlag(code) {
+  if (!/^[A-Z]{2}$/.test(code)) return null;
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 30 20');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  svg.classList.add('event-player-flag');
+
+  const rect = (x, y, width, height, fill) => {
+    const element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    element.setAttribute('x', x);
+    element.setAttribute('y', y);
+    element.setAttribute('width', width);
+    element.setAttribute('height', height);
+    element.setAttribute('fill', fill);
+    svg.append(element);
+  };
+  const rectFull = fill => rect(0, 0, 30, 20, fill);
+  const horizontal = fills => fills.forEach((fill, index) => rect(0, index * 20 / fills.length, 30, 20 / fills.length, fill));
+
+  if (code === 'GB') {
+    rectFull('#1f4b99');
+    rect(0, 7, 30, 6, '#fff');
+    rect(12, 0, 6, 20, '#fff');
+    rect(0, 8.5, 30, 3, '#cf142b');
+    rect(13.5, 0, 3, 20, '#cf142b');
+  } else if (code === 'DE') horizontal(['#171717', '#dd0000', '#ffce00']);
+  else if (code === 'NL') horizontal(['#ae1c28', '#fff', '#21468b']);
+  else if (code === 'AT') horizontal(['#ed2939', '#fff', '#ed2939']);
+  else if (code === 'BE') rect(0, 0, 10, 20, '#171717'), rect(10, 0, 10, 20, '#fade4b'), rect(20, 0, 10, 20, '#ef3340');
+  else if (code === 'PL') rect(0, 0, 30, 10, '#fff'), rect(0, 10, 30, 10, '#dc143c');
+  else if (code === 'FR') rect(0, 0, 10, 20, '#002395'), rect(10, 0, 10, 20, '#fff'), rect(20, 0, 10, 20, '#ed2939');
+  else if (code === 'IT') rect(0, 0, 10, 20, '#009246'), rect(10, 0, 10, 20, '#fff'), rect(20, 0, 10, 20, '#ce2b37');
+  else if (code === 'IE') rect(0, 0, 10, 20, '#169b62'), rect(10, 0, 10, 20, '#fff'), rect(20, 0, 10, 20, '#ff883e');
+  else if (code === 'FI') rectFull('#fff'), rect(0, 7.5, 30, 5, '#003580'), rect(8, 0, 5, 20, '#003580');
+  else if (code === 'SE') rectFull('#006aa7'), rect(0, 7.5, 30, 5, '#fecc00'), rect(8, 0, 5, 20, '#fecc00');
+  else if (code === 'NO') rectFull('#ba0c2f'), rect(0, 7, 30, 6, '#fff'), rect(8, 0, 5, 20, '#fff'), rect(0, 8.5, 30, 3, '#00205b'), rect(9.5, 0, 2, 20, '#00205b');
+  else if (code === 'DK') rectFull('#c60c30'), rect(0, 8, 30, 4, '#fff'), rect(8, 0, 4, 20, '#fff');
+  else if (code === 'CH') rectFull('#d52b1e'), rect(11.5, 3, 7, 14, '#fff'), rect(7, 7.5, 16, 5, '#fff');
+  else if (code === 'UA') horizontal(['#005bbb', '#ffd500']);
+  else if (code === 'RU') horizontal(['#fff', '#0039a6', '#d52b1e']);
+  else if (code === 'RO') rect(0, 0, 10, 20, '#002b7f'), rect(10, 0, 10, 20, '#fcd116'), rect(20, 0, 10, 20, '#ce1126');
+  else if (code === 'BG') horizontal(['#fff', '#00966e', '#d62612']);
+  else if (code === 'LT') horizontal(['#fdb913', '#006a44', '#c1272d']);
+  else if (code === 'PT') rect(0, 0, 12, 20, '#046a38'), rect(12, 0, 18, 20, '#da291c');
+  else if (code === 'ES') horizontal(['#aa151b', '#f1bf00', '#aa151b']);
+  else if (code === 'JP') rectFull('#fff'), (() => {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '15');
+    circle.setAttribute('cy', '10');
+    circle.setAttribute('r', '5');
+    circle.setAttribute('fill', '#bc002d');
+    svg.append(circle);
+  })();
+  else if (code === 'AU') rectFull('#000066'), rect(0, 0, 15, 10, '#000066');
+  else if (code === 'NZ') rectFull('#00247d');
+  else if (code === 'CA') rect(0, 0, 7.5, 20, '#d80621'), rect(7.5, 0, 15, 20, '#fff'), rect(22.5, 0, 7.5, 20, '#d80621');
+  else if (code === 'US') {
+    for (let index = 0; index < 7; index++) rect(0, index * 20 / 7, 30, 20 / 7, index % 2 ? '#fff' : '#b22234');
+    rect(0, 0, 12, 8.6, '#3c3b6e');
+  } else if (code === 'SG') horizontal(['#ef3340', '#fff']);
+  else if (code === 'CZ') rect(0, 0, 30, 10, '#fff'), rect(0, 10, 30, 10, '#d7141a');
+  else if (code === 'TR') rectFull('#e30a17'), (() => {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '12');
+    circle.setAttribute('cy', '10');
+    circle.setAttribute('r', '5');
+    circle.setAttribute('fill', '#fff');
+    svg.append(circle);
+  })();
+  else if (code === 'IN') horizontal(['#ff9933', '#fff', '#138808']);
+  else if (code === 'BR') rectFull('#009c3b'), (() => {
+    const diamond = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    diamond.setAttribute('points', '15,2 28,10 15,18 2,10');
+    diamond.setAttribute('fill', '#ffdf00');
+    svg.append(diamond);
+  })();
+  else if (code === 'KR') rectFull('#fff');
+  else if (code === 'ZA') rectFull('#007749');
+  else if (code === 'HR') horizontal(['#ff0000', '#fff', '#171796']);
+  else if (code === 'HU') horizontal(['#ce2939', '#fff', '#477050']);
+  else rectFull('#667085');
+
+  return svg;
+}
+
+function makePlayer(playerName, suppliedCode, suppliedRank) {
+  const player = makeElement('span', 'event-player');
+  const code = countryCodeForPlayer(playerName, suppliedCode);
+  const rank = Number.isInteger(suppliedRank) ? suppliedRank : playerWorldRanks[playerName] || null;
+  const flag = makeCountryFlag(code);
+  if (flag) {
+    flag.setAttribute('aria-label', `Land: ${code}`);
+    flag.setAttribute('role', 'img');
+    flag.setAttribute('title', code);
+    player.append(flag);
+  }
+  player.append(makeElement('span', 'event-player-name', playerName));
+  if (rank) {
+    player.append(makeElement('span', 'event-player-rank', `(${rank})`));
+  }
+  return player;
+}
+
 function makeBroadcasts(event) {
   const container = makeElement('div', 'event-broadcasts');
   const broadcasts = getEventBroadcasts(event);
@@ -390,9 +587,9 @@ function makeEventCard(event) {
         ? `ca. ${timeFormat.format(match.start)}`
         : event.kind === 'draw' ? 'Anwurfzeit offen' : `Session ab ${timeFormat.format(event.start)}`));
       item.append(
-        makeElement('span', '', match.player1),
+        makePlayer(match.player1, match.country1, match.rank1),
         makeElement('span', 'event-match-separator', 'vs'),
-        makeElement('span', '', match.player2),
+        makePlayer(match.player2, match.country2, match.rank2),
         matchInfo
       );
       matchList.append(item);
@@ -479,7 +676,7 @@ function render() {
 }
 
 function updateSourceStatus() {
-  const retrievedAt = [state.source?.retrievedAt, state.ukSource?.retrievedAt, state.tournamentSource?.retrievedAt]
+  const retrievedAt = [state.source?.retrievedAt, state.ukSource?.retrievedAt, state.nlSource?.retrievedAt, state.beSource?.retrievedAt, state.tournamentSource?.retrievedAt]
     .filter(value => value instanceof Date && !Number.isNaN(value.getTime()))
     .sort((left, right) => right.getTime() - left.getTime())[0];
   const freshness = retrievedAt && !Number.isNaN(retrievedAt.getTime())
@@ -488,12 +685,14 @@ function updateSourceStatus() {
   const errors = [
     state.refreshError && `D/A/CH-EPG: ${state.refreshError}`,
     state.ukError && `UK-EPG: ${state.ukError}`,
+    state.nlError && `NL-EPG: ${state.nlError}`,
+    state.beError && `BE-EPG: ${state.beError}`,
     state.tournamentError && `Turnierkalender: ${state.tournamentError}`
   ].filter(Boolean);
-  const hasSource = Boolean(state.source || state.ukSource || state.tournamentSource);
+  const hasSource = Boolean(state.source || state.ukSource || state.nlSource || state.beSource || state.tournamentSource);
   elements.statStatus.textContent = errors.length
     ? (hasSource ? 'Teilweise' : 'Fehler')
-    : state.source || state.ukSource ? 'Verbunden' : state.tournamentSource ? 'Kalender geladen' : 'Keine Quelle';
+    : state.source || state.ukSource || state.nlSource || state.beSource ? 'Verbunden' : state.tournamentSource ? 'Kalender geladen' : 'Keine Quelle';
   elements.statStatus.style.color = errors.length ? 'var(--orange)' : hasSource ? 'var(--lime)' : '';
   elements.statUpdated.textContent = errors.length
     ? errors.join(' · ')
@@ -503,9 +702,9 @@ function updateSourceStatus() {
 function updateFilters() {
   const currentCountry = elements.country.value;
   const allEvents = getAllEvents().filter(isInRange);
-  const dachCountries = ['Deutschland', 'Österreich', 'Schweiz', 'England', 'UK', 'United Kingdom', 'Vereinigtes Königreich'];
+  const supportedTerritories = ['Deutschland', 'Österreich', 'Schweiz', 'England', 'UK', 'United Kingdom', 'Vereinigtes Königreich', 'Niederlande', 'Belgien'];
   const countries = [...new Set(allEvents.flatMap(event => getEventBroadcasts(event).map(item => item.territory)))]
-    .filter(c => dachCountries.includes(c))
+    .filter(c => supportedTerritories.includes(c))
     .sort();
   elements.country.replaceChildren(new Option('Alle Länder', ''));
   for (const country of countries) elements.country.add(new Option(displayTerritory(country), country));
@@ -590,6 +789,36 @@ async function loadUkSchedule() {
   render();
 }
 
+async function loadNetherlandsSchedule() {
+  try {
+    const response = await fetch('/api/schedule-nl', { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`NL-EPG: HTTP ${response.status}.`);
+    const result = validateSchedule(await response.json());
+    state.nlEvents = result.events;
+    state.nlSource = result.source;
+    state.nlError = '';
+  } catch (error) {
+    state.nlError = error instanceof Error ? error.message : 'Der NL-EPG konnte nicht geladen werden.';
+  }
+  updateFilters();
+  render();
+}
+
+async function loadBelgiumSchedule() {
+  try {
+    const response = await fetch('/api/schedule-be', { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`BE-EPG: HTTP ${response.status}.`);
+    const result = validateSchedule(await response.json());
+    state.beEvents = result.events;
+    state.beSource = result.source;
+    state.beError = '';
+  } catch (error) {
+    state.beError = error instanceof Error ? error.message : 'Der BE-EPG konnte nicht geladen werden.';
+  }
+  updateFilters();
+  render();
+}
+
 async function loadFeed(url) {
   try {
     const requestUrl = getFeedRequestUrl(url);
@@ -610,6 +839,8 @@ function init() {
   setPeriod();
   if (location.protocol === 'http:' || location.protocol === 'https:') {
     loadUkSchedule();
+    loadNetherlandsSchedule();
+    loadBelgiumSchedule();
     loadTournamentEvents();
   }
   if (state.feedUrl) {
@@ -655,6 +886,8 @@ function init() {
     if (state.feedUrl) loadFeed(state.feedUrl);
     if (location.protocol === 'http:' || location.protocol === 'https:') {
       loadUkSchedule();
+      loadNetherlandsSchedule();
+      loadBelgiumSchedule();
       loadTournamentEvents();
     }
   }, 2 * 60 * 60 * 1000);
