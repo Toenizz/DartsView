@@ -8,65 +8,80 @@ const weekdayFormat = new Intl.DateTimeFormat('de-DE', { weekday: 'long', day: '
 const timeFormat = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: localTimeZone });
 const dateTimeFormat = new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium', timeStyle: 'short', timeZone: localTimeZone });
 const playerCountryCodes = {
-  'Luke Littler': 'GB', 'Luke Humphries': 'GB', 'Michael van Gerwen': 'NL',
-  'Gian van Veen': 'NL', 'Danny Noppert': 'NL', 'Michael Smith': 'GB',
-  'Nathan Aspinall': 'GB', 'Chris Dobey': 'GB', 'Rob Cross': 'GB',
-  'Stephen Bunting': 'GB', 'James Wade': 'GB', 'Dave Chisnall': 'GB',
-  'Peter Wright': 'GB', 'Ryan Searle': 'GB', 'Ross Smith': 'GB',
-  'Gerwyn Price': 'GB', 'Jonny Clayton': 'GB', 'Damon Heta': 'AU',
-  'Gary Anderson': 'GB', 'Martin Schindler': 'DE', 'Ricardo Pietreczko': 'DE',
-  'Florian Hempel': 'DE', 'Gabriel Clemens': 'DE', 'Niko Springer': 'DE',
+  // England (GB-ENG)
+  'Luke Littler': 'GB-ENG', 'Luke Humphries': 'GB-ENG', 'Michael Smith': 'GB-ENG',
+  'Nathan Aspinall': 'GB-ENG', 'Chris Dobey': 'GB-ENG', 'Rob Cross': 'GB-ENG',
+  'Stephen Bunting': 'GB-ENG', 'James Wade': 'GB-ENG', 'Dave Chisnall': 'GB-ENG',
+  'Ryan Searle': 'GB-ENG', 'Ross Smith': 'GB-ENG', 'Joe Cullen': 'GB-ENG',
+  'Cameron Menzies': 'GB-ENG', 'Alan Soutar': 'GB-ENG', 'Callan Rydz': 'GB-ENG',
+  'Andrew Gilding': 'GB-ENG', 'Ritchie Edhouse': 'GB-ENG', 'Scott Williams': 'GB-ENG',
+  'Josh Rock': 'GB-ENG', 'Beau Greaves': 'GB-ENG', 'Charlie Manby': 'GB-ENG',
+  'Henry Coates': 'GB-ENG', 'Tom Bissell': 'GB-ENG', 'Rob Owen': 'GB-ENG',
+  'Luke Woodhouse': 'GB-ENG', 'James Hurrell': 'GB-ENG', 'Tommy Morris': 'GB-ENG',
+  'Matt Clark': 'GB-ENG', 'David Davies': 'GB-ENG', 'Harry Lane': 'GB-ENG',
+  'Declan Bailey': 'GB-ENG', 'Darryl Pilgrim': 'GB-ENG', 'Connor Scutt': 'GB-ENG',
+  'Tom Sykes': 'GB-ENG', 'Bradley Brooks': 'GB-ENG', 'Joe Hunt': 'GB-ENG',
+  'Pat Scurfield': 'GB-ENG', 'Ben Townley': 'GB-ENG', 'Cam Crabtree': 'GB-ENG',
+  'Nathan Girvan': 'GB-ENG', 'Adam Lipscombe': 'GB-ENG', 'Adam Warner': 'GB-ENG',
+  'Adam Paxton': 'GB-ENG', 'Jamie Hughes': 'GB-ENG', 'Ian White': 'GB-ENG',
+  'Keegan Brown': 'GB-ENG', 'Neil Duff': 'GB-ENG', 'Ross Montgomery': 'GB-ENG',
+  'Richard North': 'GB-ENG', 'Andy Hamilton': 'GB-ENG', 'Darren Webster': 'GB-ENG',
+  'Adrian Lewis': 'GB-ENG', 'Steve Beaton': 'GB-ENG', 'Robert Thornton': 'GB-ENG',
+  'Stephen Burton': 'GB-ENG', 'Ryan Joyce': 'GB-ENG', 'Martin Lukeman': 'GB-ENG',
+  'Justin Hood': 'GB-ENG', 'Brentford': 'GB-ENG',
+  
+  // Scotland (GB-SCT)
+  'Gary Anderson': 'GB-SCT', 'Peter Wright': 'GB-SCT', 'Robert Thornton': 'GB-SCT',
+  'John Henderson': 'GB-SCT', 'Alan Soutar': 'GB-SCT', 'Ryan Joyce': 'GB-SCT',
+  
+  // Wales (GB-WLS)
+  'Gerwyn Price': 'GB-WLS', 'Jonny Clayton': 'GB-WLS', 'Nick Kenny': 'GB-WLS',
+  'Jim Williams': 'GB-WLS', 'Jonathan Worsley': 'GB-WLS', 'Lewy Williams': 'GB-WLS',
+  
+  // Northern Ireland (GB-NIR)
+  'Daryl Gurney': 'GB-NIR', 'Brendan Dolan': 'GB-NIR', 'Mickey Mansell': 'GB-NIR',
+  'Kyle McKinstry': 'GB-NIR', 'Gavin Carlin': 'GB-NIR',
+  
+  // Other countries
+  'Michael van Gerwen': 'NL', 'Gian van Veen': 'NL', 'Danny Noppert': 'NL',
   'Dirk van Duijvenbode': 'NL', 'Jermaine Wattimena': 'NL', 'Raymond van Barneveld': 'NL',
   'Wessel Nijman': 'NL', 'Kevin Doets': 'NL', 'Christian Kist': 'NL',
-  'Josh Rock': 'GB', 'Daryl Gurney': 'GB', 'Brendan Dolan': 'GB',
+  'Richard Veenstra': 'NL', 'Alexander Merkx': 'NL', 'Maik Kuivenhoven': 'NL',
+  'Niels Zonneveld': 'NL', 'Berry Pater': 'NL', 'Jitse Van der Wal': 'NL',
+  'Corne Groeneveld': 'NL', 'Martijn Dragt': 'NL', 'Martijn Kleermaker': 'NL',
+  'Vincent van der Voort': 'NL', 'Berry van Peer': 'NL',
+  
+  'Damon Heta': 'AU', 'Peter Jr': 'AU', 'Simon Whitlock': 'AU', 'Haupai Puha': 'NZ',
+  'Mitchell Clegg': 'NZ',
+  
   'Mike De Decker': 'BE', 'Dimitri Van den Bergh': 'BE', 'Kim Huybrechts': 'BE',
-  'Peter Jr': 'AU', 'Simon Whitlock': 'AU', 'Joe Cullen': 'GB',
-  'Cameron Menzies': 'GB', 'Alan Soutar': 'GB', 'Callan Rydz': 'GB',
-  'Andrew Gilding': 'GB', 'Ritchie Edhouse': 'GB', 'Scott Williams': 'GB',
-  'Krzysztof Ratajski': 'PL', 'Mensur Suljovic': 'AT', 'Rowby-John Rodriguez': 'AT',
-  'Jerome Shipley': 'AT', 'Jose de Sousa': 'PT',
-  'Beau Greaves': 'GB', 'Charlie Manby': 'GB', 'Henry Coates': 'GB',
-  'Tom Bissell': 'GB', 'Rob Owen': 'GB', 'Luke Woodhouse': 'GB',
-  'Alexander Merkx': 'NL', 'Max Hopp': 'DE', 'Sebastian Bialecki': 'PL',
-  'Jeffrey de Graaf': 'SE', 'Keane Barry': 'IE', 'William O\'Connor': 'IE',
-  'James Hurrell': 'GB', 'Tommy Morris': 'GB', 'Carsten Hoffmann': 'DE',
-  'Dennis Nilsson': 'SE', 'Matt Clark': 'GB', 'Terry Tan': 'SG',
-  'Franko Giuliani': 'IT', 'Joey Lynaugh': 'IE', 'Jeff Smith': 'CA',
-  'David Davies': 'GB', 'Petri Rasmus': 'FI', 'Ryusei Azemoto': 'JP',
-  'Harry Lane': 'GB', 'Declan Bailey': 'GB', 'Chris Dobey': 'GB',
-  'Richard Veenstra': 'NL', 'Cristo Reyes': 'ES', 'Darius Labanauskas': 'LT',
-  'Darryl Pilgrim': 'GB', 'Connor Scutt': 'GB', 'Luke Littler': 'GB',
-  'Tom Sykes': 'GB', 'Maik Kuivenhoven': 'NL', 'Bradley Brooks': 'GB',
-  'Joe Hunt': 'GB', 'Karel Sedlacek': 'CZ', 'Mickey Mansell': 'GB',
-  'Aurora Fochesato': 'IT', 'Steph Clarke': 'CA', 'Stefan Schroder': 'DE',
-  'Pat Scurfield': 'GB', 'Ben Townley': 'GB', 'Niels Zonneveld': 'NL',
-  'Berry Pater': 'NL', 'Jitse Van der Wal': 'NL', 'Corne Groeneveld': 'NL',
-  'Cali West': 'US', 'Cam Crabtree': 'GB', 'Leonard Gates': 'US',
-  'Boris Krcmar': 'HR', 'Niko Chamil': 'DE', 'Nathan Girvan': 'GB',
-  'Adam Lipscombe': 'GB', 'Adam Warner': 'GB', 'Adam Paxton': 'GB',
-  'Jamie Hughes': 'GB', 'Ian White': 'GB', 'Keegan Brown': 'GB',
-  'Martijn Dragt': 'NL', 'Martijn Kleermaker': 'NL', 'Vincent van der Voort': 'NL',
-  'Haupai Puha': 'NZ', 'Mitchell Clegg': 'NZ', 'Neil Duff': 'GB',
-  'Ross Montgomery': 'GB', 'Richard North': 'GB', 'Andy Hamilton': 'GB',
-  'Darren Webster': 'GB', 'Adrian Lewis': 'GB', 'Steve Beaton': 'GB',
-    'Robert Thornton': 'GB', 'Brentford': 'GB',
-    'Stephen Burton': 'GB', 'Ryan Joyce': 'GB',
-    'Martin Lukeman': 'GB', 'Berry van Peer': 'NL',
-        'Madars Razma': 'LV',
-        'Justin Hood': 'GB', 'Connor Scutt': 'GB', 'Darryl Pilgrim': 'GB',
-        'Tom Sykes': 'GB', 'Maik Kuivenhoven': 'NL', 'Bradley Brooks': 'GB',
-        'Joe Hunt': 'GB', 'Karel Sedlacek': 'CZ', 'Mickey Mansell': 'GB',
-        'Aurora Fochesato': 'IT', 'Steph Clarke': 'CA', 'Stefan Schroder': 'DE',
-        'Pat Scurfield': 'GB', 'Ben Townley': 'GB', 'Niels Zonneveld': 'NL',
-        'Berry Pater': 'NL', 'Jitse Van der Wal': 'NL', 'Corne Groeneveld': 'NL',
-        'Cali West': 'US', 'Cam Crabtree': 'GB', 'Leonard Gates': 'US',
-        'Boris Krcmar': 'HR', 'Niko Chamil': 'DE', 'Nathan Girvan': 'GB',
-        'Adam Lipscombe': 'GB', 'Adam Warner': 'GB', 'Adam Paxton': 'GB',
-        'Jamie Hughes': 'GB', 'Ian White': 'GB', 'Keegan Brown': 'GB',
-        'Martijn Dragt': 'NL', 'Martijn Kleermaker': 'NL', 'Vincent van der Voort': 'NL',
-        'Haupai Puha': 'NZ', 'Mitchell Clegg': 'NZ', 'Neil Duff': 'GB',
-        'Ross Montgomery': 'GB', 'Richard North': 'GB', 'Andy Hamilton': 'GB',
-        'Darren Webster': 'GB', 'Adrian Lewis': 'GB', 'Steve Beaton': 'GB'
+  
+  'Martin Schindler': 'DE', 'Ricardo Pietreczko': 'DE', 'Florian Hempel': 'DE',
+  'Gabriel Clemens': 'DE', 'Niko Springer': 'DE', 'Max Hopp': 'DE',
+  'Sebastian Bialecki': 'PL', 'Carsten Hoffmann': 'DE', 'Niko Chamil': 'DE',
+  'Stefan Schroder': 'DE',
+  
+  'Krzysztof Ratajski': 'PL',
+  
+  'Mensur Suljovic': 'AT', 'Rowby-John Rodriguez': 'AT', 'Jerome Shipley': 'AT',
+  
+  'Jose de Sousa': 'PT',
+  
+  'Jeffrey de Graaf': 'SE', 'Dennis Nilsson': 'SE',
+  
+  'Keane Barry': 'IE', 'William O\'Connor': 'IE', 'Joey Lynaugh': 'IE',
+  
+  'Terry Tan': 'SG', 'Franko Giuliani': 'IT', 'Aurora Fochesato': 'IT',
+  
+  'Jeff Smith': 'CA', 'Steph Clarke': 'CA', 'Leonard Gates': 'US', 'Cali West': 'US',
+  
+  'Petri Rasmus': 'FI', 'Ryusei Azemoto': 'JP',
+  
+  'Cristo Reyes': 'ES', 'Darius Labanauskas': 'LT',
+  
+  'Karel Sedlacek': 'CZ', 'Boris Krcmar': 'HR',
+  
+  'Madars Razma': 'LV',
 };
 const playerWorldRanks = {
   'Luke Humphries': 1, 'Luke Littler': 2, 'Michael van Gerwen': 3,
@@ -524,19 +539,44 @@ function makeElement(tag, className, text) {
 
 function countryCodeForPlayer(playerName, suppliedCode) {
   const code = (suppliedCode || '').trim().toUpperCase();
+  
+  // Handle UK constituent country codes (GB-ENG, GB-SCT, GB-WLS, GB-NIR)
+  if (/^GB-[A-Z]{3}$/.test(code)) {
+    return code;
+  }
+  
+  // If supplied code is generic 'GB', ignore it and use player-specific code from playerCountryCodes
+  // This ensures UK players get their correct constituent country flags (England, Scotland, Wales, Northern Ireland)
+  if (code === 'GB') {
+    return playerCountryCodes[playerName] || '';
+  }
+  
+  // Handle standard 2-letter country codes
   if (/^[A-Z]{2}$/.test(code)) return code;
+  
   return playerCountryCodes[playerName] || '';
 }
 
 function makeCountryFlag(code) {
-  if (!/^[A-Z]{2}$/.test(code)) return null;
+  if (!code || typeof code !== 'string') return null;
 
   // Use flagcdn.com for official flag images
-  // For England (GB-ENG), use the St George's Cross flag instead of UK flag
+  // Handle UK constituent countries with their specific flags
   let flagCode = code.toLowerCase();
-  if (code === 'GB') {
-    // Use England flag (St George's Cross) instead of UK flag
-    flagCode = 'gb-eng';
+  
+  // Map UK constituent country codes to flagcdn codes
+  const ukFlagMap = {
+    'GB-ENG': 'gb-eng',  // England - St George's Cross
+    'GB-SCT': 'gb-sct',  // Scotland - St Andrew's Cross
+    'GB-WLS': 'gb-wls',  // Wales - Welsh Dragon
+    'GB-NIR': 'gb-nir',  // Northern Ireland - St Patrick's Saltire
+    'GB': 'gb-eng'       // Default to England flag for generic GB
+  };
+  
+  if (ukFlagMap[code]) {
+    flagCode = ukFlagMap[code];
+  } else if (!/^[A-Z]{2}(-[A-Z]{3})?$/.test(code)) {
+    return null;
   }
 
   const img = document.createElement('img');
@@ -853,6 +893,60 @@ function renderTournamentSummary(eventPool) {
         </div>
       </div>
     `;
+
+        // Add players with flags if tournament has matches
+        if (tournament.matches && tournament.matches.length > 0) {
+          const playersContainer = document.createElement('div');
+          playersContainer.className = 'tournament-summary-players';
+        
+          // Collect unique players from all matches
+          const playerMap = new Map();
+          for (const match of tournament.matches) {
+            if (match.player1) {
+              const code1 = countryCodeForPlayer(match.player1, match.country1);
+              const rank1 = match.rank1 || playerWorldRanks[match.player1] || null;
+              if (!playerMap.has(match.player1)) {
+                playerMap.set(match.player1, { name: match.player1, code: code1, rank: rank1 });
+              }
+            }
+            if (match.player2) {
+              const code2 = countryCodeForPlayer(match.player2, match.country2);
+              const rank2 = match.rank2 || playerWorldRanks[match.player2] || null;
+              if (!playerMap.has(match.player2)) {
+                playerMap.set(match.player2, { name: match.player2, code: code2, rank: rank2 });
+              }
+            }
+          }
+        
+          for (const player of playerMap.values()) {
+            const playerEl = document.createElement('span');
+            playerEl.className = 'tournament-summary-player';
+        
+            // Normalize the country code for flag lookup
+            const code = player.code || '';
+            const flagCode = code.toLowerCase();
+            // Map UK constituent country codes to flagcdn codes
+            const ukFlagMap = {
+              'gb-eng': 'gb-eng',  // England - St George's Cross
+              'gb-sct': 'gb-sct',  // Scotland - St Andrew's Cross
+              'gb-wls': 'gb-wls',  // Wales - Welsh Dragon
+              'gb-nir': 'gb-nir',  // Northern Ireland - St Patrick's Saltire
+              'gb': 'gb-eng'       // Default to England flag for generic GB
+            };
+                        const finalFlagCode = ukFlagMap[flagCode] || flagCode;
+            const flagUrl = `https://flagcdn.com/16x12/${finalFlagCode}.png`;
+        
+            playerEl.innerHTML = `
+              <img class="tournament-summary-player-flag" src="${flagUrl}" alt="${code}" loading="lazy" width="16" height="12">
+              <span class="tournament-summary-player-name">${player.name}</span>
+              ${player.rank ? `<span class="tournament-summary-player-rank">(${player.rank})</span>` : ''}
+            `;
+            playersContainer.appendChild(playerEl);
+          }
+        
+          item.appendChild(playersContainer);
+        }
+    
     list.appendChild(item);
   }
 
@@ -867,21 +961,30 @@ function renderTournamentSummary(eventPool) {
   
     elements.rankingList.replaceChildren();
   
+      // Map UK constituent country codes to flagcdn codes (same as makeCountryFlag)
+      const ukFlagMap = {
+        'GB-ENG': 'gb-eng',  // England - St George's Cross
+        'GB-SCT': 'gb-sct',  // Scotland - St Andrew's Cross
+        'GB-WLS': 'gb-wls',  // Wales - Welsh Dragon
+        'GB-NIR': 'gb-nir',  // Northern Ireland - St Patrick's Saltire
+        'GB': 'gb-eng'       // Default to England flag for generic GB
+      };
+  
     for (const [name, rank] of sortedPlayers) {
       const countryCode = playerCountryCodes[name] || 'XX';
-          // Use England flag (St George's Cross) instead of UK flag for GB
-          let flagCode = countryCode.toLowerCase();
-          if (countryCode === 'GB') {
-            flagCode = 'gb-eng';
-          }
-          const flagUrl = `https://flagcdn.com/16x12/${flagCode}.png`;
+        // Use the same flag code mapping as makeCountryFlag
+        let flagCode = countryCode.toLowerCase();
+        if (ukFlagMap[countryCode]) {
+          flagCode = ukFlagMap[countryCode];
+        }
+        const flagUrl = `https://flagcdn.com/16x12/${flagCode}.png`;
     
       const item = document.createElement('div');
       item.className = 'ranking-item';
       item.innerHTML = `
+              <span class="ranking-rank">${rank}.</span>
         <img class="ranking-flag" src="${flagUrl}" alt="${countryCode}" loading="lazy" width="16" height="12">
         <span class="ranking-name">${name}</span>
-        <span class="ranking-rank">${rank}</span>
       `;
       elements.rankingList.appendChild(item);
     }

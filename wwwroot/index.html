@@ -56,17 +56,19 @@
           </article>
         </section>
 
+                <!-- Tab Navigation - always visible -->
+                <div class="view-toggle" role="tablist" aria-label="Spielplan-Ansicht">
+                  <button class="view-button is-active" id="view-schedule" type="button" role="tab" aria-selected="true" aria-controls="schedule-panel" aria-label="Alle Termine der nächsten 14 Tage">Nächste 14 Tage</button>
+                  <button class="view-button" id="view-calendar" type="button" role="tab" aria-selected="false" aria-controls="schedule-panel">Dartskalender</button>
+                  <button class="view-button" id="view-ranking" type="button" role="tab" aria-selected="false" aria-controls="ranking-panel">Weltrangliste</button>
+                  <span class="period-label" id="period-label">NÄCHSTE 14 TAGE</span>
+                </div>
+
         <section class="schedule-section" id="schedule-panel" role="tabpanel" aria-labelledby="view-schedule" tabindex="0">
           <div class="section-heading">
             <div>
               <p class="eyebrow">LIVE-KALENDER</p>
               <h2 id="schedule-heading">Dart Events</h2>
-            </div>
-            <div class="view-toggle" role="tablist" aria-label="Spielplan-Ansicht">
-              <button class="view-button is-active" id="view-schedule" type="button" role="tab" aria-selected="true" aria-controls="schedule-panel" aria-label="Alle Termine der nächsten 14 Tage">Nächste 14 Tage</button>
-              <button class="view-button" id="view-calendar" type="button" role="tab" aria-selected="false" aria-controls="schedule-panel">Dartskalender</button>
-              <button class="view-button" id="view-ranking" type="button" role="tab" aria-selected="false" aria-controls="ranking-panel">Weltrangliste</button>
-              <span class="period-label" id="period-label">NÄCHSTE 14 TAGE</span>
             </div>
           </div>
 

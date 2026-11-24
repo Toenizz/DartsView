@@ -795,104 +795,106 @@ internal static class Darts1Feed
     {
         var countries = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["Luke Littler"] = "GB",
-            ["Luke Humphries"] = "GB",
-            ["Michael van Gerwen"] = "NL",
-            ["Gian van Veen"] = "NL",
-            ["Danny Noppert"] = "NL",
-            ["Michael Smith"] = "GB",
-            ["Nathan Aspinall"] = "GB",
-            ["Chris Dobey"] = "GB",
-            ["Rob Cross"] = "GB",
-            ["Stephen Bunting"] = "GB",
-            ["James Wade"] = "GB",
-            ["Dave Chisnall"] = "GB",
-            ["Peter Wright"] = "GB",
-            ["Ryan Searle"] = "GB",
-            ["Ross Smith"] = "GB",
-            ["Gerwyn Price"] = "GB",
-            ["Jonny Clayton"] = "GB",
-            ["Gary Anderson"] = "GB",
-            ["Damon Heta"] = "AU",
-            ["Simon Whitlock"] = "AU",
-            ["Martin Schindler"] = "DE",
-            ["Ricardo Pietreczko"] = "DE",
-            ["Florian Hempel"] = "DE",
-            ["Gabriel Clemens"] = "DE",
-            ["Niko Springer"] = "DE",
-            ["Dirk van Duijvenbode"] = "NL",
-            ["Jermaine Wattimena"] = "NL",
-            ["Raymond van Barneveld"] = "NL",
-            ["Wessel Nijman"] = "NL",
-            ["Kevin Doets"] = "NL",
-            ["Christian Kist"] = "NL",
-            ["Josh Rock"] = "GB",
-            ["Daryl Gurney"] = "GB",
-            ["Brendan Dolan"] = "GB",
-            ["Mike De Decker"] = "BE",
-            ["Dimitri Van den Bergh"] = "BE",
-            ["Kim Huybrechts"] = "BE",
-            ["Krzysztof Ratajski"] = "PL",
-            ["Mensur Suljovic"] = "AT",
-            ["Rowby-John Rodriguez"] = "AT",
-            ["Joe Cullen"] = "GB",
-            ["Cameron Menzies"] = "GB",
-            ["Alan Soutar"] = "GB",
-            ["Callan Rydz"] = "GB",
-            ["Andrew Gilding"] = "GB",
-            ["Ritchie Edhouse"] = "GB",
-            ["Scott Williams"] = "GB",
+                // England (GB-ENG)
+                ["Luke Littler"] = "GB-ENG", ["Luke Humphries"] = "GB-ENG", ["Michael Smith"] = "GB-ENG",
+                ["Nathan Aspinall"] = "GB-ENG", ["Chris Dobey"] = "GB-ENG", ["Rob Cross"] = "GB-ENG",
+                ["Stephen Bunting"] = "GB-ENG", ["James Wade"] = "GB-ENG", ["Dave Chisnall"] = "GB-ENG",
+                ["Ryan Searle"] = "GB-ENG", ["Ross Smith"] = "GB-ENG", ["Joe Cullen"] = "GB-ENG",
+                ["Cameron Menzies"] = "GB-ENG", ["Callan Rydz"] = "GB-ENG", ["Andrew Gilding"] = "GB-ENG",
+                ["Ritchie Edhouse"] = "GB-ENG", ["Scott Williams"] = "GB-ENG", ["Josh Rock"] = "GB-ENG",
+                ["Beau Greaves"] = "GB-ENG", ["Charlie Manby"] = "GB-ENG", ["Henry Coates"] = "GB-ENG",
+                ["Tom Bissell"] = "GB-ENG", ["Rob Owen"] = "GB-ENG", ["Luke Woodhouse"] = "GB-ENG",
+                ["James Hurrell"] = "GB-ENG", ["Tommy Morris"] = "GB-ENG", ["Matt Clark"] = "GB-ENG",
+                ["David Davies"] = "GB-ENG", ["Harry Lane"] = "GB-ENG", ["Declan Bailey"] = "GB-ENG",
+                ["Darryl Pilgrim"] = "GB-ENG", ["Connor Scutt"] = "GB-ENG", ["Tom Sykes"] = "GB-ENG",
+                ["Bradley Brooks"] = "GB-ENG", ["Joe Hunt"] = "GB-ENG", ["Pat Scurfield"] = "GB-ENG",
+                ["Ben Townley"] = "GB-ENG", ["Neil Duff"] = "GB-ENG", ["Ross Montgomery"] = "GB-ENG",
+                ["Andy Hamilton"] = "GB-ENG", ["Darren Webster"] = "GB-ENG", ["Adrian Lewis"] = "GB-ENG",
+                ["Steve Beaton"] = "GB-ENG", ["Robert Thornton"] = "GB-ENG", ["Stephen Burton"] = "GB-ENG",
+                ["Ryan Joyce"] = "GB-ENG", ["Martin Lukeman"] = "GB-ENG", ["Justin Hood"] = "GB-ENG",
+                ["Brentford"] = "GB-ENG", ["Alan Soutar"] = "GB-ENG",
+            
+                // Scotland (GB-SCT)
+                ["Gary Anderson"] = "GB-SCT", ["Peter Wright"] = "GB-SCT", ["John Henderson"] = "GB-SCT",
+            
+                // Wales (GB-WLS)
+                ["Gerwyn Price"] = "GB-WLS", ["Jonny Clayton"] = "GB-WLS", ["Nick Kenny"] = "GB-WLS",
+                ["Jim Williams"] = "GB-WLS", ["Jonathan Worsley"] = "GB-WLS", ["Lewy Williams"] = "GB-WLS",
+            
+                // Northern Ireland (GB-NIR)
+                ["Daryl Gurney"] = "GB-NIR", ["Brendan Dolan"] = "GB-NIR", ["Mickey Mansell"] = "GB-NIR",
+                ["Kyle McKinstry"] = "GB-NIR", ["Gavin Carlin"] = "GB-NIR",
+            
+                // Netherlands (NL)
+                ["Michael van Gerwen"] = "NL", ["Gian van Veen"] = "NL", ["Danny Noppert"] = "NL",
+                ["Dirk van Duijvenbode"] = "NL", ["Jermaine Wattimena"] = "NL", ["Raymond van Barneveld"] = "NL",
+                ["Wessel Nijman"] = "NL", ["Kevin Doets"] = "NL", ["Christian Kist"] = "NL",
+                ["Richard Veenstra"] = "NL", ["Alexander Merkx"] = "NL", ["Maik Kuivenhoven"] = "NL",
+                ["Niels Zonneveld"] = "NL", ["Berry Pater"] = "NL", ["Jitse Van der Wal"] = "NL",
+                ["Corne Groeneveld"] = "NL", ["Martijn Dragt"] = "NL", ["Martijn Kleermaker"] = "NL",
+                ["Vincent van der Voort"] = "NL", ["Berry van Peer"] = "NL",
+            
+                // Australia (AU)
+                ["Damon Heta"] = "AU", ["Simon Whitlock"] = "AU",
+            
+                // New Zealand (NZ)
+                ["Haupai Puha"] = "NZ", ["Mitchell Clegg"] = "NZ",
+            
+                // Belgium (BE)
+                ["Mike De Decker"] = "BE", ["Dimitri Van den Bergh"] = "BE", ["Kim Huybrechts"] = "BE",
+            
+                // Germany (DE)
+                ["Martin Schindler"] = "DE", ["Ricardo Pietreczko"] = "DE", ["Florian Hempel"] = "DE",
+                ["Gabriel Clemens"] = "DE", ["Niko Springer"] = "DE", ["Max Hopp"] = "DE",
+                ["Carsten Hoffmann"] = "DE", ["Niko Chamil"] = "DE", ["Stefan Schroder"] = "DE",
+            
+                // Poland (PL)
+                ["Krzysztof Ratajski"] = "PL", ["Sebastian Bialecki"] = "PL",
+            
+                // Austria (AT)
+                ["Mensur Suljovic"] = "AT", ["Rowby-John Rodriguez"] = "AT", ["Jerome Shipley"] = "AT",
+            
+                // Portugal (PT)
             ["Jose de Sousa"] = "PT",
-            ["Beau Greaves"] = "GB",
-            ["Charlie Manby"] = "GB",
-            ["Henry Coates"] = "GB",
-            ["Tom Bissell"] = "GB",
-            ["Rob Owen"] = "GB",
-            ["Luke Woodhouse"] = "GB",
-            ["Alexander Merkx"] = "NL",
-            ["Max Hopp"] = "DE",
-            ["Sebastian Bialecki"] = "PL",
-            ["Jeffrey de Graaf"] = "SE",
-            ["Keane Barry"] = "IE",
-            ["William O'Connor"] = "IE",
-            ["James Hurrell"] = "GB",
-            ["Tommy Morris"] = "GB",
-            ["Carsten Hoffmann"] = "DE",
-            ["Dennis Nilsson"] = "SE",
-            ["Matt Clark"] = "GB",
-            ["Terry Tan"] = "SG",
-            ["Franko Giuliani"] = "IT",
-            ["Joey Lynaugh"] = "IE",
-            ["Jeff Smith"] = "CA",
-            ["David Davies"] = "GB",
-            ["Petri Rasmus"] = "FI",
-            ["Ryusei Azemoto"] = "JP",
-            ["Harry Lane"] = "GB",
-            ["Declan Bailey"] = "GB",
-            ["Richard Veenstra"] = "NL",
-            ["Cristo Reyes"] = "ES",
-            ["Darius Labanauskas"] = "LT",
-            ["Darryl Pilgrim"] = "GB",
-            ["Connor Scutt"] = "GB",
-            ["Tom Sykes"] = "GB",
-            ["Maik Kuivenhoven"] = "NL",
-            ["Bradley Brooks"] = "GB",
-            ["Joe Hunt"] = "GB",
-            ["Karel Sedlacek"] = "CZ",
-            ["Mickey Mansell"] = "GB",
-            ["Aurora Fochesato"] = "IT",
-            ["Steph Clarke"] = "CA",
-            ["Stefan Schroder"] = "DE",
-            ["Pat Scurfield"] = "GB",
-            ["Ben Townley"] = "GB",
-            ["Niels Zonneveld"] = "NL",
-            ["Berry Pater"] = "NL",
-            ["Jitse Van der Wal"] = "NL",
-            ["Corne Groeneveld"] = "NL",
-            ["Leonard Gates"] = "US",
-            ["Haupai Puha"] = "NZ",
-            ["Neil Duff"] = "GB",
-            ["Ross Montgomery"] = "GB"
+            
+                // Sweden (SE)
+                ["Jeffrey de Graaf"] = "SE", ["Dennis Nilsson"] = "SE",
+            
+                // Ireland (IE)
+                ["Keane Barry"] = "IE", ["William O'Connor"] = "IE", ["Joey Lynaugh"] = "IE",
+            
+                // Singapore (SG)
+                ["Terry Tan"] = "SG",
+            
+                // Italy (IT)
+                ["Franko Giuliani"] = "IT", ["Aurora Fochesato"] = "IT",
+            
+                // Canada (CA)
+                ["Jeff Smith"] = "CA", ["Steph Clarke"] = "CA",
+            
+                // United States (US)
+                ["Leonard Gates"] = "US", ["Cali West"] = "US",
+            
+                // Finland (FI)
+                ["Petri Rasmus"] = "FI",
+            
+                // Japan (JP)
+                ["Ryusei Azemoto"] = "JP",
+            
+                // Spain (ES)
+                ["Cristo Reyes"] = "ES",
+            
+                // Lithuania (LT)
+                ["Darius Labanauskas"] = "LT",
+            
+                // Czech Republic (CZ)
+                ["Karel Sedlacek"] = "CZ",
+            
+                // Croatia (HR)
+                ["Boris Krcmar"] = "HR",
+            
+                // Latvia (LV)
+                ["Madars Razma"] = "LV"
         };
 
         return countries.TryGetValue(playerName.Trim(), out var countryCode) ? countryCode : null;
