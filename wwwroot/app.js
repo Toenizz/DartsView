@@ -1072,12 +1072,14 @@ function renderTournamentSummary(eventPool) {
           }
         }
 
-    item.innerHTML = `
+    const prizeMoney = getTournamentPrizeMoney(tournament.name);
+        item.innerHTML = `
       <div class="tournament-summary-date">${dateRange}</div>
       <div class="tournament-summary-info">
         <div class="tournament-summary-name-row">
               ${logoUrl ? `<img class="tournament-summary-logo" src="${logoUrl}" alt="${tournament.name}" loading="lazy">` : ''}
           <strong class="tournament-summary-name">${tournament.name}</strong>
+              ${prizeMoney ? `<span class="tournament-summary-prize">(${prizeMoney})</span>` : ''}
         </div>
       </div>
     `;
