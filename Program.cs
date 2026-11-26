@@ -810,12 +810,13 @@ internal static class Darts1Feed
                 ["Bradley Brooks"] = "GB-ENG", ["Joe Hunt"] = "GB-ENG", ["Pat Scurfield"] = "GB-ENG",
                 ["Ben Townley"] = "GB-ENG", ["Neil Duff"] = "GB-ENG", ["Ross Montgomery"] = "GB-ENG",
                 ["Andy Hamilton"] = "GB-ENG", ["Darren Webster"] = "GB-ENG", ["Adrian Lewis"] = "GB-ENG",
-                ["Steve Beaton"] = "GB-ENG", ["Robert Thornton"] = "GB-ENG", ["Stephen Burton"] = "GB-ENG",
+                ["Steve Beaton"] = "GB-ENG", ["Stephen Burton"] = "GB-ENG",
                 ["Ryan Joyce"] = "GB-ENG", ["Martin Lukeman"] = "GB-ENG", ["Justin Hood"] = "GB-ENG",
-                ["Brentford"] = "GB-ENG", ["Alan Soutar"] = "GB-ENG",
+                                ["Brentford"] = "GB-ENG",
             
                 // Scotland (GB-SCT)
                 ["Gary Anderson"] = "GB-SCT", ["Peter Wright"] = "GB-SCT", ["John Henderson"] = "GB-SCT",
+                                ["Robert Thornton"] = "GB-SCT", ["Alan Soutar"] = "GB-SCT",
             
                 // Wales (GB-WLS)
                 ["Gerwyn Price"] = "GB-WLS", ["Jonny Clayton"] = "GB-WLS", ["Nick Kenny"] = "GB-WLS",

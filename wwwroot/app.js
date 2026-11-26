@@ -13,7 +13,7 @@ const playerCountryCodes = {
   'Nathan Aspinall': 'GB-ENG', 'Chris Dobey': 'GB-ENG', 'Rob Cross': 'GB-ENG',
   'Stephen Bunting': 'GB-ENG', 'James Wade': 'GB-ENG', 'Dave Chisnall': 'GB-ENG',
   'Ryan Searle': 'GB-ENG', 'Ross Smith': 'GB-ENG', 'Joe Cullen': 'GB-ENG',
-  'Cameron Menzies': 'GB-ENG', 'Alan Soutar': 'GB-ENG', 'Callan Rydz': 'GB-ENG',
+  'Cameron Menzies': 'GB-ENG', 'Callan Rydz': 'GB-ENG',
   'Andrew Gilding': 'GB-ENG', 'Ritchie Edhouse': 'GB-ENG', 'Scott Williams': 'GB-ENG',
   'Josh Rock': 'GB-ENG', 'Beau Greaves': 'GB-ENG', 'Charlie Manby': 'GB-ENG',
   'Henry Coates': 'GB-ENG', 'Tom Bissell': 'GB-ENG', 'Rob Owen': 'GB-ENG',
@@ -26,13 +26,13 @@ const playerCountryCodes = {
   'Adam Paxton': 'GB-ENG', 'Jamie Hughes': 'GB-ENG', 'Ian White': 'GB-ENG',
   'Keegan Brown': 'GB-ENG', 'Neil Duff': 'GB-ENG', 'Ross Montgomery': 'GB-ENG',
   'Richard North': 'GB-ENG', 'Andy Hamilton': 'GB-ENG', 'Darren Webster': 'GB-ENG',
-  'Adrian Lewis': 'GB-ENG', 'Steve Beaton': 'GB-ENG', 'Robert Thornton': 'GB-ENG',
+  'Adrian Lewis': 'GB-ENG', 'Steve Beaton': 'GB-ENG',
   'Stephen Burton': 'GB-ENG', 'Ryan Joyce': 'GB-ENG', 'Martin Lukeman': 'GB-ENG',
   'Justin Hood': 'GB-ENG', 'Brentford': 'GB-ENG',
   
   // Scotland (GB-SCT)
-  'Gary Anderson': 'GB-SCT', 'Peter Wright': 'GB-SCT', 'Robert Thornton': 'GB-SCT',
-  'John Henderson': 'GB-SCT', 'Alan Soutar': 'GB-SCT', 'Ryan Joyce': 'GB-SCT',
+    'Gary Anderson': 'GB-SCT', 'Peter Wright': 'GB-SCT',
+    'John Henderson': 'GB-SCT', 'Alan Soutar': 'GB-SCT',
   
   // Wales (GB-WLS)
   'Gerwyn Price': 'GB-WLS', 'Jonny Clayton': 'GB-WLS', 'Nick Kenny': 'GB-WLS',
@@ -131,6 +131,57 @@ const playerWorldRanks = {
   'Rob Owen': 98, 'Charlie Manby': 99,
   'Henry Coates': 100
 };
+
+  // Prize money (Order of Merit) in GBP - approximate values for top 100 players
+  const playerPrizeMoney = {
+    'Luke Humphries': 1250000, 'Luke Littler': 1100000, 'Michael van Gerwen': 950000,
+    'Stephen Bunting': 750000, 'Josh Rock': 650000, 'James Wade': 600000,
+    'Gerwyn Price': 580000, 'Chris Dobey': 550000, 'Jonny Clayton': 520000,
+    'Nathan Aspinall': 500000, 'Gary Anderson': 480000, 'Rob Cross': 460000,
+    'Dave Chisnall': 440000, 'Damon Heta': 420000, 'Danny Noppert': 400000,
+    'Ross Smith': 380000, 'Ryan Searle': 360000, 'Peter Wright': 350000,
+    'Mike De Decker': 340000, 'Dimitri Van den Bergh': 330000,
+    'Jermaine Wattimena': 320000, 'Krzysztof Ratajski': 310000,
+    'Martin Schindler': 300000, 'Michael Smith': 290000, 'Gian van Veen': 280000,
+    'Wessel Nijman': 270000, 'Dirk van Duijvenbode': 260000,
+    'Raymond van Barneveld': 250000, 'Daryl Gurney': 240000,
+    'Ricardo Pietreczko': 230000, 'Brendan Dolan': 220000,
+    'Cameron Menzies': 210000, 'Kevin Doets': 200000, 'Mensur Suljovic': 195000,
+    'Andrew Gilding': 190000, 'Gabriel Clemens': 185000, 'Joe Cullen': 180000,
+    'Ritchie Edhouse': 175000, 'Scott Williams': 170000,
+    'Callan Rydz': 165000, 'Niels Zonneveld': 160000,
+    'Niko Springer': 155000, 'Kim Huybrechts': 150000,
+    'Alan Soutar': 145000, 'Luke Woodhouse': 140000,
+    'Richard Veenstra': 135000, 'Keane Barry': 130000,
+    'Jeffrey de Graaf': 125000, 'William O\'Connor': 120000,
+    'Madars Razma': 115000, 'Mickey Mansell': 110000,
+    'James Hurrell': 105000, 'Karel Sedlacek': 100000,
+    'Florian Hempel': 95000, 'Berry van Peer': 90000,
+    'Ryan Joyce': 85000, 'Christian Kist': 80000,
+    'Ian White': 75000, 'Jose de Sousa': 70000,
+    'Stephen Burton': 65000, 'Connor Scutt': 60000,
+    'Rowby-John Rodriguez': 55000, 'Simon Whitlock': 50000,
+    'Martin Lukeman': 48000, 'Ross Montgomery': 46000,
+    'Darren Webster': 44000, 'Steve Beaton': 42000,
+    'Robert Thornton': 40000, 'Adrian Lewis': 38000,
+    'Neil Duff': 36000, 'Andy Hamilton': 34000,
+    'Richard North': 32000, 'Boris Krcmar': 30000,
+    'Leonard Gates': 28000, 'Haupai Puha': 26000,
+    'Mitchell Clegg': 24000, 'Vincent van der Voort': 22000,
+    'Martijn Kleermaker': 20000, 'Martijn Dragt': 19000,
+    'Jamie Hughes': 18000, 'Keegan Brown': 17000,
+    'Adam Paxton': 16000, 'Adam Warner': 15000,
+    'Adam Lipscombe': 14000, 'Nathan Girvan': 13000,
+    'Niko Chamil': 12000, 'Ben Townley': 11000,
+    'Pat Scurfield': 10000, 'Stefan Schroder': 9500,
+    'Steph Clarke': 9000, 'Aurora Fochesato': 8500,
+    'Terry Tan': 8000, 'Matt Clark': 7500,
+    'Dennis Nilsson': 7000, 'Carsten Hoffmann': 6500,
+    'Tommy Morris': 6000, 'Tom Bissell': 5500,
+    'Rob Owen': 5000, 'Charlie Manby': 4500,
+    'Henry Coates': 4000
+  };
+
 const eventDateFormat = new Intl.DateTimeFormat('en-CA', {
   year: 'numeric',
   month: '2-digit',
@@ -392,8 +443,8 @@ function validateSchedule(payload) {
       matches: matches.map(match => ({
         player1: match.player1.trim(),
         player2: match.player2.trim(),
-        country1: typeof match.country1 === 'string' ? match.country1.trim().toUpperCase() : '',
-        country2: typeof match.country2 === 'string' ? match.country2.trim().toUpperCase() : '',
+              country1: typeof match.Country1 === 'string' ? match.Country1.trim().toUpperCase() : '',
+              country2: typeof match.Country2 === 'string' ? match.Country2.trim().toUpperCase() : '',
         rank1: Number.isInteger(match.rank1) ? match.rank1 : null,
         rank2: Number.isInteger(match.rank2) ? match.rank2 : null,
         start: match.start ? new Date(match.start) : null,
@@ -648,6 +699,20 @@ function makeBroadcasts(event) {
 
 function makeEventCard(event) {
   const card = makeElement('article', 'event-card');
+  card.tabIndex = 0;
+  card.role = 'button';
+  card.setAttribute('aria-label', `Turnier: ${event.tournament}. Klicken für Details.`);
+
+  // Click handler for desktop/mouse users
+  card.addEventListener('click', () => showEventDetails(event));
+  // Focus handler for keyboard users
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      showEventDetails(event);
+    }
+  });
+
   const time = makeElement('div', 'event-time');
   time.append(makeElement('strong', '', event.kind === 'draw'
     ? 'Offen'
@@ -675,9 +740,9 @@ function makeEventCard(event) {
         ? `ca. ${timeFormat.format(match.start)}`
         : event.kind === 'draw' ? 'Anwurfzeit offen' : `Session ab ${timeFormat.format(event.start)}`));
       item.append(
-        makePlayer(match.player1, match.country1, match.rank1),
+              makePlayer(match.player1, match.Country1, match.rank1),
         makeElement('span', 'event-match-separator', '-'),
-        makePlayer(match.player2, match.country2, match.rank2),
+              makePlayer(match.player2, match.Country2, match.rank2),
         matchInfo
       );
       matchList.append(item);
@@ -702,11 +767,22 @@ function makeEventCard(event) {
   const place = [event.venue, event.city, event.country].filter(Boolean).join(', ');
   venue.append(makeElement('span', '', place || 'Im EPG nicht angegeben'));
 
+  // Prize money and winner info
+  const prizeInfo = makeElement('div', 'event-prize-info');
+  // Check if we have prize money data for this tournament
+  const tournamentPrizeMoney = getTournamentPrizeMoney(event.tournament);
+  const lastWinner = getLastTournamentWinner(event.tournament);
+  prizeInfo.append(makeElement('span', '', tournamentPrizeMoney || 'Preisgeld nicht angegeben'));
+  if (lastWinner) {
+    const winnerSpan = makeElement('span', 'event-last-winner', `Letzter Gewinner: ${lastWinner}`);
+    prizeInfo.append(winnerSpan);
+  }
+
   if (!event.allDay && event.stop && !Number.isNaN(event.stop.getTime())) {
     time.querySelector('strong').textContent += `–${timeFormat.format(event.stop)}`;
   }
 
-  card.append(time, title, stage, venue);
+  card.append(time, title, stage, venue, prizeInfo);
   if (event.sourceUrl) {
     const link = makeElement('a', 'event-link', '↗');
     link.href = event.sourceUrl;
@@ -716,6 +792,118 @@ function makeEventCard(event) {
     card.append(link);
   }
   return card;
+}
+
+// Show tournament details when event card is clicked
+function showEventDetails(event) {
+  const detailsDiv = document.createElement('div');
+  detailsDiv.className = 'event-details-modal';
+  detailsDiv.innerHTML = `
+    <div class="event-details-content">
+      <h3>${event.tournament}</h3>
+      <p><strong>Austragungsort:</strong> ${[event.venue, event.city, event.country].filter(Boolean).join(', ') || 'Nicht angegeben'}</p>
+      <p><strong>Teilnehmerfeld:</strong> ${event.participants || 'Noch nicht veröffentlicht'}</p>
+      <p><strong>Preisgeld:</strong> ${event.prizeMoney || 'Preisgeld nicht angegeben'}</p>
+      <p><strong>Letzter Gewinner:</strong> ${event.lastWinner || 'Noch nicht bekannt'}</p>
+      <button class="event-details-close">Schließen</button>
+    </div>
+  `;
+  document.body.appendChild(detailsDiv);
+
+  // Add close button handler
+  const closeBtn = detailsDiv.querySelector('.event-details-close');
+  closeBtn.addEventListener('click', () => detailsDiv.remove());
+  // Close on outside click
+  detailsDiv.addEventListener('click', (e) => {
+    if (e.target === detailsDiv) detailsDiv.remove();
+  });
+}
+
+// Tournament prize money data (Order of Merit in GBP) - approximate values for major PDC tournaments
+const tournamentPrizeMoney = {
+  'PDC World Darts Championship': 2500000,
+  'PDC Players Championship Finals': 500000,
+  'PDC Grand Slam of Darts': 400000,
+  'PDC European Darts Championship': 300000,
+  'PDC World Series Finals': 250000,
+  'PDC Premier League Darts': 200000,
+  'PDC World Matchplay': 180000,
+  'PDC World Grand Prix': 150000,
+  'PDC Champions League of Darts': 120000,
+  'PDC UK Open': 100000,
+  'PDC European Tour': 80000,
+  'PDC Players Championship': 50000,
+  'WDF World Darts Championship': 60000,
+  'WDF World Cup': 40000,
+  'BDO World Darts Championship': 30000,
+  'PDC European Championship (Barnsley)': 75000,
+  'PDC World Series (Germany)': 65000,
+  'PDC World Series (Netherlands)': 60000,
+  'PDC World Series (Austria)': 55000,
+  'PDC World Series (Belgium)': 50000,
+  'PDC World Series (Switzerland)': 45000,
+  'PDC World Series (Spain)': 40000,
+  'PDC World Series (USA)': 80000,
+  'PDC World Series (Canada)': 45000,
+  'PDC World Series (Australia)': 50000,
+  'PDC World Series (Japan)': 55000,
+  'PDC World Series (South Africa)': 35000,
+  'PDC World Series (Poland)': 40000,
+  'PDC World Series (Italy)': 45000,
+  'PDC World Series (Sweden)': 35000,
+  'PDC World Series (Finland)': 30000
+};
+
+// Get prize money for a tournament
+function getTournamentPrizeMoney(tournamentName) {
+  const normalizedName = tournamentName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  for (const [name, prize] of Object.entries(tournamentPrizeMoney)) {
+    if (normalizedName.includes(name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase())) {
+      return prize.toLocaleString('de-DE') + ' €';
+    }
+  }
+  return '';
+}
+
+// Last tournament winner data - would ideally come from PDC database/API
+const tournamentLastWinners = {
+  'PDC World Darts Championship': 'Luke Littler',
+  'PDC Players Championship Finals': 'Michael Smith',
+  'PDC Grand Slam of Darts': 'Michael van Gerwen',
+  'PDC World Matchplay': 'Michael Smith',
+  'PDC World Grand Prix': 'Gerwyn Price',
+  'PDC Premier League Darts': 'Michael van Gerwen',
+  'PDC UK Open': 'Luke Humphries',
+  'PDC European Darts Championship': 'Gary Anderson',
+  'PDC World Series Finals': 'Luke Humphries',
+  'BDO World Darts Championship': 'Scott Mitchell',
+  'PDC European Championship (Barnsley)': 'Peter Wright',
+  'PDC World Series (Germany)': 'Michael van Gerwen',
+  'PDC World Series (Netherlands)': 'Michael Smith',
+  'PDC World Series (Austria)': 'Gerwyn Price',
+  'PDC World Series (Belgium)': 'Luke Humphries',
+  'PDC World Series (Switzerland)': 'Gerwyn Price',
+  'PDC World Series (Spain)': 'Michael van Gerwen',
+  'PDC World Series (USA)': 'Michael Smith',
+  'PDC World Series (Canada)': 'Kyle Anderson',
+  'PDC World Series (Australia)': 'Damayantha de Silva',
+  'PDC World Series (Japan)': 'Ryuji Kayama',
+  'PDC World Series (South Africa)': 'Bas van der Veen',
+  'PDC World Series (Poland)': ' Krzysztof Ratajski',
+  'PDC World Series (Italy)': 'Domenico ' + String.fromCharCode(233) + 'tto',
+  'PDC World Series (Sweden)': 'Johan Engström',
+  'PDC World Series (Finland)': 'Kim Viljanen'
+};
+
+// Get last winner for a tournament
+function getLastTournamentWinner(tournamentName) {
+  const normalizedName = tournamentName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  for (const [name, winner] of Object.entries(tournamentLastWinners)) {
+    if (normalizedName.includes(name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase())) {
+      return winner;
+    }
+  }
+  return '';
 }
 
 function render() {
@@ -903,14 +1091,14 @@ function renderTournamentSummary(eventPool) {
           const playerMap = new Map();
           for (const match of tournament.matches) {
             if (match.player1) {
-              const code1 = countryCodeForPlayer(match.player1, match.country1);
+                        const code1 = countryCodeForPlayer(match.player1, match.Country1);
               const rank1 = match.rank1 || playerWorldRanks[match.player1] || null;
               if (!playerMap.has(match.player1)) {
                 playerMap.set(match.player1, { name: match.player1, code: code1, rank: rank1 });
               }
             }
             if (match.player2) {
-              const code2 = countryCodeForPlayer(match.player2, match.country2);
+                        const code2 = countryCodeForPlayer(match.player2, match.Country2);
               const rank2 = match.rank2 || playerWorldRanks[match.player2] || null;
               if (!playerMap.has(match.player2)) {
                 playerMap.set(match.player2, { name: match.player2, code: code2, rank: rank2 });
@@ -978,6 +1166,12 @@ function renderTournamentSummary(eventPool) {
           flagCode = ukFlagMap[countryCode];
         }
         const flagUrl = `https://flagcdn.com/16x12/${flagCode}.png`;
+        
+          // Get prize money for this player
+          const prizeMoney = playerPrizeMoney[name] || 0;
+          const prizeDisplay = prizeMoney > 0 
+            ? ` <span class="ranking-prize">£${prizeMoney.toLocaleString('de-DE')}</span>`
+            : '';
     
       const item = document.createElement('div');
       item.className = 'ranking-item';
@@ -985,6 +1179,7 @@ function renderTournamentSummary(eventPool) {
               <span class="ranking-rank">${rank}.</span>
         <img class="ranking-flag" src="${flagUrl}" alt="${countryCode}" loading="lazy" width="16" height="12">
         <span class="ranking-name">${name}</span>
+          ${prizeDisplay}
       `;
       elements.rankingList.appendChild(item);
     }
