@@ -26,7 +26,7 @@ const playerCountryCodes = {
   'Adam Paxton': 'GB-ENG', 'Jamie Hughes': 'GB-ENG', 'Ian White': 'GB-ENG',
   'Keegan Brown': 'GB-ENG', 'Neil Duff': 'GB-ENG', 'Ross Montgomery': 'GB-ENG',
   'Richard North': 'GB-ENG', 'Andy Hamilton': 'GB-ENG', 'Darren Webster': 'GB-ENG',
-  'Adrian Lewis': 'GB-ENG', 'Steve Beaton': 'GB-ENG',
+  'Adrian Lewis': 'GB-ENG', 'Steve Beaton': 'GB-ENG', 'Robert Thornton': 'GB-ENG',
   'Stephen Burton': 'GB-ENG', 'Ryan Joyce': 'GB-ENG', 'Martin Lukeman': 'GB-ENG',
   'Justin Hood': 'GB-ENG', 'Brentford': 'GB-ENG',
   
@@ -1249,7 +1249,7 @@ function renderTournamentSummary(eventPool) {
           // Get prize money for this player
           const prizeMoney = playerPrizeMoney[name] || 0;
           const prizeDisplay = prizeMoney > 0 
-            ? ` <span class="ranking-prize">£${prizeMoney.toLocaleString('de-DE')}</span>`
+                      ? `£${prizeMoney.toLocaleString('de-DE')}`
             : '';
     
       const item = document.createElement('div');
@@ -1258,7 +1258,7 @@ function renderTournamentSummary(eventPool) {
               <span class="ranking-rank">${rank}.</span>
         <img class="ranking-flag" src="${flagUrl}" alt="${countryCode}" loading="lazy" width="16" height="12">
         <span class="ranking-name">${name}</span>
-          ${prizeDisplay}
+              <span class="ranking-prize">${prizeDisplay}</span>
       `;
       elements.rankingList.appendChild(item);
     }
