@@ -94,7 +94,8 @@ internal sealed class DartsviewWebViewClient : WebViewClient
 
         try
         {
-            var assetPath = string.IsNullOrEmpty(path) ? "wwwroot/index.html" : $"wwwroot/{path}";
+            var cleanPath = path.Split('?')[0];
+            var assetPath = string.IsNullOrEmpty(cleanPath) ? "wwwroot/index.html" : $"wwwroot/{cleanPath}";
             var asset = assets.Open(assetPath);
             var headers = new Dictionary<string, string> { ["Cache-Control"] = "no-store" };
             return new WebResourceResponse(ContentTypeFor(path), "UTF-8", 200, "OK", headers, asset);
@@ -186,8 +187,11 @@ internal sealed class DartsviewWebViewClient : WebViewClient
             new MemoryStream(Encoding.UTF8.GetBytes(json)));
     }
 
-    private static string ContentTypeFor(string path) =>
-        Path.GetExtension(path).ToLowerInvariant() switch
+    private static string ContentTypeFor(string path)
+    {
+        var cleanPath = path.Split('?')[0];
+        var extension = Path.GetExtension(cleanPath).ToLowerInvariant();
+        return extension switch
         {
             ".css" => "text/css",
             ".js" => "application/javascript",
@@ -196,6 +200,7 @@ internal sealed class DartsviewWebViewClient : WebViewClient
             ".png" => "image/png",
             _ => "application/octet-stream"
         };
+    }
 
     private sealed record CachedFeed(string Json, DateTimeOffset ExpiresAt);
 }
