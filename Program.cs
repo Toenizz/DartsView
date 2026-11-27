@@ -1119,6 +1119,10 @@ internal sealed class XmltvFeed
         entry ??= sameTimeEvents.FirstOrDefault(item => IsGenericDarts(item.Tournament));
         if (entry is null)
         {
+                    if (events.ContainsKey(key))
+                    {
+                        return;
+                    }
             entry = new MutableEpgEvent(
                 key,
                 tournament,
@@ -1135,6 +1139,10 @@ internal sealed class XmltvFeed
         {
             if (IsGenericDarts(entry.Tournament) && !IsGenericDarts(tournament))
             {
+                        if (events.ContainsKey(key))
+                        {
+                            return;
+                        }
                 events.Remove(entry.Key);
                 entry.Promote(key, tournament, title.Trim());
                 events.Add(entry.Key, entry);
