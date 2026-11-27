@@ -226,6 +226,7 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
   .search-field { flex-basis: 100%; word-wrap: anywhere; white-space: normal; }
   .select-wrap { flex: 1; }
   .event-card { grid-template-columns: 72px minmax(0, 1fr) minmax(72px, 96px) 16px; gap: 12px; }
+  .event-time strong { font-size: 16px; }
   .event-venue { display: none; }
   .event-prize-info { display: none; }
   .event-match { grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr); }
@@ -255,6 +256,7 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
   .select-wrap { width: calc(50% - 5px); flex: 1 1 calc(50% - 5px); }
   .filter-reset { padding: 5px 0; }
   .event-card { grid-template-columns: 61px minmax(0, 1fr) 15px; gap: 10px; padding: 12px; }
+    .event-time strong { font-size: 14px; }
 
   /* Ranking Panel Styles */
   .ranking-panel {
