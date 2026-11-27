@@ -858,6 +858,41 @@ internal static class Darts1Feed
                 // Austria (AT)
                 ["Mensur Suljovic"] = "AT", ["Rowby-John Rodriguez"] = "AT", ["Jerome Shipley"] = "AT",
             
+                                // Scotland (GB-SCT)
+                                ["Gary Anderson"] = "GB-SCT", ["Peter Wright"] = "GB-SCT",
+                                ["John Henderson"] = "GB-SCT", ["Alan Soutar"] = "GB-SCT",
+                                ["Lorraine Hyde"] = "GB-SCT", ["Mitchell Lawrie"] = "GB-SCT",
+                
+                                // Wales (GB-WLS)
+                                ["Gerwyn Price"] = "GB-WLS", ["Jonny Clayton"] = "GB-WLS", ["Nick Kenny"] = "GB-WLS",
+                                ["Jim Williams"] = "GB-WLS", ["Jonathan Worsley"] = "GB-WLS", ["Lewy Williams"] = "GB-WLS",
+                                ["Rhian O'Sullivan"] = "GB-WLS",
+                
+                                // Northern Ireland (GB-NIR)
+                                ["Daryl Gurney"] = "GB-NIR", ["Brendan Dolan"] = "GB-NIR", ["Mickey Mansell"] = "GB-NIR",
+                                ["Kyle McKinstry"] = "GB-NIR", ["Gavin Carlin"] = "GB-NIR",
+                
+                                // Austria (AT)
+                                ["Mensur Suljovic"] = "AT", ["Rowby-John Rodriguez"] = "AT", ["Jerome Shipley"] = "AT",
+                
+                                // Other countries
+                                ["Michael van Gerwen"] = "NL", ["Gian van Veen"] = "NL", ["Danny Noppert"] = "NL",
+                                ["Dirk van Duijvenbode"] = "NL", ["Jermaine Wattimena"] = "NL", ["Raymond van Barneveld"] = "NL",
+                                ["Moreno Blom"] = "NL", ["Anca Zijlstra"] = "NL", ["Ron Meulenkamp"] = "NL", ["Aileen de Graaf"] = "NL",
+                                ["Wessel Nijman"] = "NL", ["Kevin Doets"] = "NL", ["Christian Kist"] = "NL",
+                                ["Richard Veenstra"] = "NL", ["Alexander Merkx"] = "NL", ["Maik Kuivenhoven"] = "NL",
+                                ["Niels Zonneveld"] = "NL", ["Berry Pater"] = "NL", ["Jitse Van der Wal"] = "NL",
+                                ["Corne Groeneveld"] = "NL", ["Martijn Dragt"] = "NL", ["Martijn Kleermaker"] = "NL",
+                                ["Vincent van der Voort"] = "NL", ["Berry van Peer"] = "NL",
+                                ["Emine Dursun"] = "TR", ["Zehra Gemi"] = "TR",
+                                ["Damon Heta"] = "AU", ["Peter Jr"] = "AU", ["Simon Whitlock"] = "AU",
+                                ["Haupai Puha"] = "NZ", ["Mitchell Clegg"] = "NZ", ["Mark Cleaver"] = "NZ",
+                                ["Mike De Decker"] = "BE", ["Dimitri Van den Bergh"] = "BE", ["Kim Huybrechts"] = "BE",
+                                ["Martin Schindler"] = "DE", ["Ricardo Pietreczko"] = "DE", ["Florian Hempel"] = "DE",
+                                ["Gabriel Clemens"] = "DE", ["Niko Springer"] = "DE", ["Max Hopp"] = "DE", ["Irina Armstrong"] = "DE",
+                                ["Sebastian Bialecki"] = "PL", ["Carsten Hoffmann"] = "DE", ["Niko Chamil"] = "DE",
+                                ["Stefan Schroder"] = "DE",
+                
                 // Portugal (PT)
             ["Jose de Sousa"] = "PT",
             
@@ -898,8 +933,17 @@ internal static class Darts1Feed
                 ["Boris Krcmar"] = "HR",
             
                 // Latvia (LV)
-                ["Madars Razma"] = "LV"
-        };
+                                ["Madars Razma"] = "LV",
+
+                                // Additional England players
+                                ["Ronnie Baxter"] = "GB-ENG", ["Steve Brown"] = "GB-ENG", ["Phil Taylor"] = "GB-ENG",
+                                ["Raymond Smith"] = "GB-ENG", ["Tony O'Shea"] = "GB-ENG", ["Garry Thompson"] = "GB-ENG",
+                                ["Jamie Caven"] = "GB-ENG", ["Ricky Evans"] = "GB-ENG", ["James Richardson"] = "GB-ENG",
+                                ["Nathan Girvan"] = "GB-ENG", ["Adam Lipscombe"] = "GB-ENG", ["Adam Warner"] = "GB-ENG",
+                                ["Adam Paxton"] = "GB-ENG", ["Jamie Hughes"] = "GB-ENG", ["Ian White"] = "GB-ENG",
+                                ["Keegan Brown"] = "GB-ENG", ["Neil Duff"] = "GB-ENG", ["Ross Montgomery"] = "GB-ENG",
+                                ["Richard North"] = "GB-ENG", ["Andy Hamilton"] = "GB-ENG", ["Darren Webster"] = "GB-ENG",
+                                ["Adrian Lewis"] = "GB-ENG", ["Steve Beaton"] = "GB-ENG",
 
         return countries.TryGetValue(playerName.Trim(), out var countryCode) ? countryCode : null;
     }
