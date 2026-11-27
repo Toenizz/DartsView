@@ -804,7 +804,7 @@ internal static class Darts1Feed
                 ["Ritchie Edhouse"] = "GB-ENG", ["Scott Williams"] = "GB-ENG", ["Josh Rock"] = "GB-ENG",
                 ["Beau Greaves"] = "GB-ENG", ["Charlie Manby"] = "GB-ENG", ["Henry Coates"] = "GB-ENG",
                 ["Tom Bissell"] = "GB-ENG", ["Rob Owen"] = "GB-ENG", ["Luke Woodhouse"] = "GB-ENG",
-                ["James Hurrell"] = "GB-ENG", ["Tommy Morris"] = "GB-ENG", ["Matt Clark"] = "GB-ENG",
+                ["James Hurrell"] = "GB-ENG", ["Tommy Morris"] = "GB-ENG", ["Matt Clark"] = "GB-ENG", ["Paula Jacklin"] = "GB-ENG",
                 ["David Davies"] = "GB-ENG", ["Harry Lane"] = "GB-ENG", ["Declan Bailey"] = "GB-ENG",
                 ["Darryl Pilgrim"] = "GB-ENG", ["Connor Scutt"] = "GB-ENG", ["Tom Sykes"] = "GB-ENG",
                 ["Bradley Brooks"] = "GB-ENG", ["Joe Hunt"] = "GB-ENG", ["Pat Scurfield"] = "GB-ENG",
@@ -817,6 +817,7 @@ internal static class Darts1Feed
                 // Scotland (GB-SCT)
                 ["Gary Anderson"] = "GB-SCT", ["Peter Wright"] = "GB-SCT", ["John Henderson"] = "GB-SCT",
                                 ["Robert Thornton"] = "GB-SCT", ["Alan Soutar"] = "GB-SCT",
+                ["Lorraine Hyde"] = "GB-SCT", ["Mitchell Lawrie"] = "GB-SCT",
             
                 // Wales (GB-WLS)
                 ["Gerwyn Price"] = "GB-WLS", ["Jonny Clayton"] = "GB-WLS", ["Nick Kenny"] = "GB-WLS",
@@ -829,24 +830,26 @@ internal static class Darts1Feed
                 // Netherlands (NL)
                 ["Michael van Gerwen"] = "NL", ["Gian van Veen"] = "NL", ["Danny Noppert"] = "NL",
                 ["Dirk van Duijvenbode"] = "NL", ["Jermaine Wattimena"] = "NL", ["Raymond van Barneveld"] = "NL",
+                                ["Moreno Blom"] = "NL", ["Anca Zijlstra"] = "NL", ["Ron Meulenkamp"] = "NL", ["Aileen de Graaf"] = "NL",
                 ["Wessel Nijman"] = "NL", ["Kevin Doets"] = "NL", ["Christian Kist"] = "NL",
                 ["Richard Veenstra"] = "NL", ["Alexander Merkx"] = "NL", ["Maik Kuivenhoven"] = "NL",
                 ["Niels Zonneveld"] = "NL", ["Berry Pater"] = "NL", ["Jitse Van der Wal"] = "NL",
                 ["Corne Groeneveld"] = "NL", ["Martijn Dragt"] = "NL", ["Martijn Kleermaker"] = "NL",
                 ["Vincent van der Voort"] = "NL", ["Berry van Peer"] = "NL",
+                                ["Emine Dursun"] = "TR", ["Zehra Gemi"] = "TR",
             
                 // Australia (AU)
                 ["Damon Heta"] = "AU", ["Simon Whitlock"] = "AU",
             
                 // New Zealand (NZ)
-                ["Haupai Puha"] = "NZ", ["Mitchell Clegg"] = "NZ",
+                ["Haupai Puha"] = "NZ", ["Mitchell Clegg"] = "NZ", ["Mark Cleaver"] = "NZ",
             
                 // Belgium (BE)
                 ["Mike De Decker"] = "BE", ["Dimitri Van den Bergh"] = "BE", ["Kim Huybrechts"] = "BE",
             
                 // Germany (DE)
                 ["Martin Schindler"] = "DE", ["Ricardo Pietreczko"] = "DE", ["Florian Hempel"] = "DE",
-                ["Gabriel Clemens"] = "DE", ["Niko Springer"] = "DE", ["Max Hopp"] = "DE",
+                ["Gabriel Clemens"] = "DE", ["Niko Springer"] = "DE", ["Max Hopp"] = "DE", ["Irina Armstrong"] = "DE",
                 ["Carsten Hoffmann"] = "DE", ["Niko Chamil"] = "DE", ["Stefan Schroder"] = "DE",
             
                 // Poland (PL)
@@ -880,7 +883,7 @@ internal static class Darts1Feed
                 ["Petri Rasmus"] = "FI",
             
                 // Japan (JP)
-                ["Ryusei Azemoto"] = "JP",
+                ["Ryusei Azemoto"] = "JP", ["Mayumi Ouchi"] = "JP",
             
                 // Spain (ES)
                 ["Cristo Reyes"] = "ES",

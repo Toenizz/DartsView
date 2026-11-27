@@ -26,17 +26,19 @@ const playerCountryCodes = {
   'Adam Paxton': 'GB-ENG', 'Jamie Hughes': 'GB-ENG', 'Ian White': 'GB-ENG',
   'Keegan Brown': 'GB-ENG', 'Neil Duff': 'GB-ENG', 'Ross Montgomery': 'GB-ENG',
   'Richard North': 'GB-ENG', 'Andy Hamilton': 'GB-ENG', 'Darren Webster': 'GB-ENG',
-  'Adrian Lewis': 'GB-ENG', 'Steve Beaton': 'GB-ENG', 'Robert Thornton': 'GB-ENG',
+  'Adrian Lewis': 'GB-ENG', 'Steve Beaton': 'GB-ENG', 'Robert Thornton': 'GB-SCT',
   'Stephen Burton': 'GB-ENG', 'Ryan Joyce': 'GB-ENG', 'Martin Lukeman': 'GB-ENG',
-  'Justin Hood': 'GB-ENG', 'Brentford': 'GB-ENG',
+  'Justin Hood': 'GB-ENG', 'Brentford': 'GB-ENG', 'Paula Jacklin': 'GB-ENG',
   
   // Scotland (GB-SCT)
     'Gary Anderson': 'GB-SCT', 'Peter Wright': 'GB-SCT',
     'John Henderson': 'GB-SCT', 'Alan Soutar': 'GB-SCT',
+      'Lorraine Hyde': 'GB-SCT', 'Mitchell Lawrie': 'GB-SCT',
   
   // Wales (GB-WLS)
   'Gerwyn Price': 'GB-WLS', 'Jonny Clayton': 'GB-WLS', 'Nick Kenny': 'GB-WLS',
   'Jim Williams': 'GB-WLS', 'Jonathan Worsley': 'GB-WLS', 'Lewy Williams': 'GB-WLS',
+    'Rhian O\'Sullivan': 'GB-WLS',
   
   // Northern Ireland (GB-NIR)
   'Daryl Gurney': 'GB-NIR', 'Brendan Dolan': 'GB-NIR', 'Mickey Mansell': 'GB-NIR',
@@ -45,19 +47,21 @@ const playerCountryCodes = {
   // Other countries
   'Michael van Gerwen': 'NL', 'Gian van Veen': 'NL', 'Danny Noppert': 'NL',
   'Dirk van Duijvenbode': 'NL', 'Jermaine Wattimena': 'NL', 'Raymond van Barneveld': 'NL',
+    'Moreno Blom': 'NL', 'Anca Zijlstra': 'NL', 'Ron Meulenkamp': 'NL', 'Aileen de Graaf': 'NL',
   'Wessel Nijman': 'NL', 'Kevin Doets': 'NL', 'Christian Kist': 'NL',
   'Richard Veenstra': 'NL', 'Alexander Merkx': 'NL', 'Maik Kuivenhoven': 'NL',
   'Niels Zonneveld': 'NL', 'Berry Pater': 'NL', 'Jitse Van der Wal': 'NL',
   'Corne Groeneveld': 'NL', 'Martijn Dragt': 'NL', 'Martijn Kleermaker': 'NL',
   'Vincent van der Voort': 'NL', 'Berry van Peer': 'NL',
+    'Emine Dursun': 'TR', 'Zehra Gemi': 'TR',
   
   'Damon Heta': 'AU', 'Peter Jr': 'AU', 'Simon Whitlock': 'AU', 'Haupai Puha': 'NZ',
-  'Mitchell Clegg': 'NZ',
+  'Mitchell Clegg': 'NZ', 'Mark Cleaver': 'NZ',
   
   'Mike De Decker': 'BE', 'Dimitri Van den Bergh': 'BE', 'Kim Huybrechts': 'BE',
   
   'Martin Schindler': 'DE', 'Ricardo Pietreczko': 'DE', 'Florian Hempel': 'DE',
-  'Gabriel Clemens': 'DE', 'Niko Springer': 'DE', 'Max Hopp': 'DE',
+  'Gabriel Clemens': 'DE', 'Niko Springer': 'DE', 'Max Hopp': 'DE', 'Irina Armstrong': 'DE',
   'Sebastian Bialecki': 'PL', 'Carsten Hoffmann': 'DE', 'Niko Chamil': 'DE',
   'Stefan Schroder': 'DE',
   
@@ -75,7 +79,7 @@ const playerCountryCodes = {
   
   'Jeff Smith': 'CA', 'Steph Clarke': 'CA', 'Leonard Gates': 'US', 'Cali West': 'US',
   
-  'Petri Rasmus': 'FI', 'Ryusei Azemoto': 'JP',
+  'Petri Rasmus': 'FI', 'Ryusei Azemoto': 'JP', 'Mayumi Ouchi': 'JP',
   
   'Cristo Reyes': 'ES', 'Darius Labanauskas': 'LT',
   
@@ -589,6 +593,12 @@ function makeElement(tag, className, text) {
 }
 
 function countryCodeForPlayer(playerName, suppliedCode) {
+  // Handle team combination names (e.g., "Nijman / Coates") - use first player's code
+  if (playerName.includes(' / ')) {
+    const firstPlayer = playerName.split(' / ')[0].trim();
+    return countryCodeForPlayer(firstPlayer, suppliedCode);
+  }
+  
   const code = (suppliedCode || '').trim().toUpperCase();
   
   // Handle UK constituent country codes (GB-ENG, GB-SCT, GB-WLS, GB-NIR)
@@ -740,9 +750,9 @@ function makeEventCard(event) {
         ? `ca. ${timeFormat.format(match.start)}`
         : event.kind === 'draw' ? 'Anwurfzeit offen' : `Session ab ${timeFormat.format(event.start)}`));
       item.append(
-              makePlayer(match.player1, match.Country1, match.rank1),
+                    makePlayer(match.player1, match.country1 ?? match.Country1, match.rank1),
         makeElement('span', 'event-match-separator', '-'),
-              makePlayer(match.player2, match.Country2, match.rank2),
+                    makePlayer(match.player2, match.country2 ?? match.Country2, match.rank2),
         matchInfo
       );
       matchList.append(item);
@@ -1155,14 +1165,14 @@ function renderTournamentSummary(eventPool) {
           const playerMap = new Map();
           for (const match of tournament.matches) {
             if (match.player1) {
-                        const code1 = countryCodeForPlayer(match.player1, match.Country1);
+                        const code1 = countryCodeForPlayer(match.player1, match.country1 ?? match.Country1);
               const rank1 = match.rank1 || playerWorldRanks[match.player1] || null;
               if (!playerMap.has(match.player1)) {
                 playerMap.set(match.player1, { name: match.player1, code: code1, rank: rank1 });
               }
             }
             if (match.player2) {
-                        const code2 = countryCodeForPlayer(match.player2, match.Country2);
+                                                const code2 = countryCodeForPlayer(match.player2, match.country2 ?? match.Country2);
               const rank2 = match.rank2 || playerWorldRanks[match.player2] || null;
               if (!playerMap.has(match.player2)) {
                 playerMap.set(match.player2, { name: match.player2, code: code2, rank: rank2 });
