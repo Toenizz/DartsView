@@ -530,3 +530,156 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
               }
             }
 
+                  /* Tournament Popup Styles */
+                  .tournament-popup-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                    padding: 16px;
+                  }
+
+                  .tournament-popup {
+                    background: var(--surface);
+                    border-radius: 12px;
+                    max-width: 400px;
+                    width: 100%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                    position: relative;
+                  }
+
+                  .tournament-popup-close {
+                    position: absolute;
+                    top: 12px;
+                    right: 12px;
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    color: var(--text);
+                    opacity: 0.7;
+                    transition: opacity 0.2s;
+                  }
+
+                  .tournament-popup-close:hover {
+                    opacity: 1;
+                  }
+
+                  .tournament-popup-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 20px;
+                    border-bottom: 1px solid var(--border, #333);
+                  }
+
+                  .tournament-popup-logo {
+                    width: 40px;
+                    height: 40px;
+                    object-fit: contain;
+                    border-radius: 6px;
+                    background: #fff;
+                    padding: 6px;
+                  }
+
+                  .tournament-popup-title {
+                    margin: 0;
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: var(--text);
+                    flex: 1;
+                  }
+
+                  .tournament-popup-content {
+                    padding: 20px;
+                  }
+
+                  .tournament-popup-section {
+                    margin-bottom: 16px;
+                  }
+
+                  .tournament-popup-section-title {
+                    margin: 0 0 8px 0;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: var(--text);
+                  }
+
+                  .tournament-popup-location {
+                    margin: 0;
+                    color: var(--text-secondary, #8790a0);
+                    font-size: 14px;
+                  }
+
+                  .tournament-popup-prize {
+                    margin: 0;
+                    color: var(--lime);
+                    font-size: 16px;
+                    font-weight: 600;
+                  }
+
+                  .tournament-popup-winners {
+                    margin: 0;
+                    padding: 0;
+                    list-style: none;
+                  }
+
+                  .tournament-popup-winner-item {
+                    padding: 8px 0;
+                    border-bottom: 1px solid var(--border, #333);
+                    font-size: 14px;
+                    color: var(--text);
+                  }
+
+                  .tournament-popup-winner-item:last-child {
+                    border-bottom: none;
+                  }
+
+                  @media (max-width: 540px) {
+                    .tournament-popup {
+                      max-width: 100%;
+                      margin: 0;
+                      border-radius: 0;
+                      height: 100vh;
+                      max-height: none;
+                    }
+
+                    .tournament-popup-header {
+                      padding: 16px;
+                    }
+
+                    .tournament-popup-title {
+                      font-size: 18px;
+                    }
+
+                    .tournament-popup-logo {
+                      width: 36px;
+                      height: 36px;
+                      padding: 4px;
+                    }
+
+                    .tournament-popup-content {
+                      padding: 16px;
+                    }
+
+                    .tournament-popup-section-title {
+                      font-size: 13px;
+                    }
+
+                    .tournament-popup-prize {
+                      font-size: 14px;
+                    }
+
+                    .tournament-popup-winner-item {
+                      font-size: 13px;
+                    }
+                  }
+

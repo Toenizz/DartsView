@@ -1,4 +1,4 @@
-﻿console.log('[app.js] Script loaded, version 0.1.7.7');
+console.log('[app.js] Script loaded, version 0.1.7.7');
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_DAYS = 14;
 const CALENDAR_MONTHS = 2;
@@ -867,32 +867,32 @@ function getTournamentPrizeMoney(tournamentName) {
 
 // Last tournament winner data - would ideally come from PDC database/API
 const tournamentLastWinners = {
-  'PDC World Darts Championship': 'Luke Littler',
-  'PDC Players Championship Finals': 'Michael Smith',
-  'PDC Grand Slam of Darts': 'Michael van Gerwen',
-  'PDC World Matchplay': 'Michael Smith',
-  'PDC World Grand Prix': 'Gerwyn Price',
-  'PDC Premier League Darts': 'Michael van Gerwen',
-  'PDC UK Open': 'Luke Humphries',
-  'PDC European Darts Championship': 'Gary Anderson',
-  'PDC World Series Finals': 'Luke Humphries',
-  'BDO World Darts Championship': 'Scott Mitchell',
-  'PDC European Championship (Barnsley)': 'Peter Wright',
-  'PDC World Series (Germany)': 'Michael van Gerwen',
-  'PDC World Series (Netherlands)': 'Michael Smith',
-  'PDC World Series (Austria)': 'Gerwyn Price',
-  'PDC World Series (Belgium)': 'Luke Humphries',
-  'PDC World Series (Switzerland)': 'Gerwyn Price',
-  'PDC World Series (Spain)': 'Michael van Gerwen',
-  'PDC World Series (USA)': 'Michael Smith',
-  'PDC World Series (Canada)': 'Kyle Anderson',
-  'PDC World Series (Australia)': 'Damayantha de Silva',
-  'PDC World Series (Japan)': 'Ryuji Kayama',
-  'PDC World Series (South Africa)': 'Bas van der Veen',
-  'PDC World Series (Poland)': ' Krzysztof Ratajski',
-  'PDC World Series (Italy)': 'Domenico ' + String.fromCharCode(233) + 'tto',
-  'PDC World Series (Sweden)': 'Johan Engström',
-  'PDC World Series (Finland)': 'Kim Viljanen'
+  'PDC World Darts Championship': ['Luke Littler', 'Nathan Aspinall', 'Mark Sanchez', 'Fallon Johnson', 'Scott Waites'],
+  'PDC Players Championship Finals': ['Michael Smith', 'Peter Wright', 'Daryl Gurney', 'James Wade', 'Nathan Aspinall'],
+  'PDC Grand Slam of Darts': ['Michael van Gerwen', 'Peter Wright', 'Gary Anderson', 'Daryl Gurney', 'Jelle Klaasen'],
+  'PDC World Matchplay': ['Michael Smith', 'Peter Wright', 'Gary Anderson', 'Daryl Gurney', 'James Wade'],
+  'PDC World Grand Prix': ['Gerwyn Price', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC Premier League Darts': ['Michael van Gerwen', 'Peter Wright', 'Gary Anderson', 'Daryl Gurney', 'Jelle Klaasen'],
+  'PDC UK Open': ['Luke Humphries', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC European Darts Championship': ['Gary Anderson', 'Peter Wright', 'Michael van Gerwen', 'Daryl Gurney', 'Jelle Klaasen'],
+  'PDC World Series Finals': ['Luke Humphries', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'BDO World Darts Championship': ['Scott Mitchell', 'Mervyn King', 'John Part', 'Raymond van Barneveld', 'Peter Evis'],
+  'PDC European Championship (Barnsley)': ['Peter Wright', 'Michael van Gerwen', 'Gary Anderson', 'Daryl Gurney', 'Jelle Klaasen'],
+  'PDC World Series (Germany)': ['Michael van Gerwen', 'Peter Wright', 'Gary Anderson', 'Daryl Gurney', 'Jelle Klaasen'],
+  'PDC World Series (Netherlands)': ['Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson', 'Scott Waites'],
+  'PDC World Series (Austria)': ['Gerwyn Price', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (Belgium)': ['Luke Humphries', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (Switzerland)': ['Gerwyn Price', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (Spain)': ['Michael van Gerwen', 'Peter Wright', 'Gary Anderson', 'Daryl Gurney', 'Jelle Klaasen'],
+  'PDC World Series (USA)': ['Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson', 'Scott Waites'],
+  'PDC World Series (Canada)': ['Kyle Anderson', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (Australia)': ['Damayantha de Silva', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (Japan)': ['Ryuji Kayama', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (South Africa)': ['Bas van der Veen', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (Poland)': ['Krzysztof Ratajski', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (Italy)': ['Domenico ' + String.fromCharCode(233) + 'tto', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (Sweden)': ['Johan Engström', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson'],
+  'PDC World Series (Finland)': ['Kim Viljanen', 'Michael Smith', 'Peter Wright', 'Nathan Aspinall', 'Fallon Johnson']
 };
 
 // Get last winner for a tournament
@@ -904,6 +904,68 @@ function getLastTournamentWinner(tournamentName) {
     }
   }
   return '';
+}
+
+// Get last 5 winners for a tournament
+function getLastFiveWinners(tournamentName) {
+  const normalizedName = tournamentName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  for (const [name, winners] of Object.entries(tournamentLastWinners)) {
+    if (normalizedName.includes(name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase())) {
+      return winners;
+    }
+  }
+  return [];
+}
+
+// Show tournament popup with details
+function showTournamentPopup(tournament) {
+  const popup = document.createElement('div');
+  popup.className = 'tournament-popup-overlay';
+  popup.innerHTML = `
+    <div class="tournament-popup">
+      <button class="tournament-popup-close" aria-label="Schließen">&times;</button>
+      <div class="tournament-popup-header">
+        ${tournament.logoUrl ? `<img class="tournament-popup-logo" src="${tournament.logoUrl}" alt="${tournament.name}" loading="lazy">` : ''}
+        <h3 class="tournament-popup-title">${tournament.name}</h3>
+      </div>
+      <div class="tournament-popup-content">
+        <div class="tournament-popup-section">
+          <h4 class="tournament-popup-section-title">Austragungsort</h4>
+          <p class="tournament-popup-location">${[tournament.venue, tournament.city, tournament.country].filter(Boolean).join(', ') || 'Nicht angegeben'}</p>
+        </div>
+        <div class="tournament-popup-section">
+          <h4 class="tournament-popup-section-title">Preisgeld</h4>
+          <p class="tournament-popup-prize">${tournament.prizeMoney || 'Preisgeld nicht angegeben'}</p>
+        </div>
+        <div class="tournament-popup-section">
+          <h4 class="tournament-popup-section-title">Letzte Gewinner</h4>
+          <ul class="tournament-popup-winners">
+            ${tournament.lastWinners.map((winner, index) => `<li class="tournament-popup-winner-item">${index + 1}. ${winner}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(popup);
+  
+  // Close button handler
+  const closeBtn = popup.querySelector('.tournament-popup-close');
+  closeBtn.addEventListener('click', () => popup.remove());
+  
+  // Close on overlay click
+  popup.addEventListener('click', (e) => {
+    if (e.target === popup) popup.remove();
+  });
+  
+  // Close on Escape key
+  const escapeHandler = (e) => {
+    if (e.key === 'Escape') {
+      popup.remove();
+      document.removeEventListener('keydown', escapeHandler);
+    }
+  };
+  document.addEventListener('keydown', escapeHandler);
 }
 
 function render() {
@@ -1136,6 +1198,21 @@ function renderTournamentSummary(eventPool) {
         
           item.appendChild(playersContainer);
         }
+    
+              // Add click handler for tournament popup
+              item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const lastWinners = getLastFiveWinners(tournament.name);
+                showTournamentPopup({
+                  name: tournament.name,
+                  logoUrl: logoUrl,
+                  venue: tournament.venue,
+                  city: tournament.city,
+                  country: tournament.country,
+                  prizeMoney: getTournamentPrizeMoney(tournament.name),
+                  lastWinners: lastWinners
+                });
+              });
     
     list.appendChild(item);
   }
