@@ -643,6 +643,25 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
                     border-bottom: none;
                   }
 
+                                    .tournament-popup-back {
+                                      margin-top: 20px;
+                                      padding: 10px 16px;
+                                      background: var(--surface);
+                                      border: 1px solid var(--border, #333);
+                                      color: var(--text);
+                                      font-size: 14px;
+                                      font-weight: 500;
+                                      border-radius: 6px;
+                                      cursor: pointer;
+                                      transition: background 0.2s, border-color 0.2s;
+                                    }
+
+                                    .tournament-popup-back:hover {
+                                      background: var(--lime);
+                                      border-color: var(--lime);
+                                      color: var(--bg);
+                                    }
+
                   @media (max-width: 540px) {
                     .tournament-popup {
                       max-width: 100%;
@@ -681,5 +700,10 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
                     .tournament-popup-winner-item {
                       font-size: 13px;
                     }
+
+                                      .tournament-popup-back {
+                                        font-size: 13px;
+                                        padding: 8px 12px;
+                                      }
                   }
 

@@ -943,6 +943,7 @@ function showTournamentPopup(tournament) {
             ${tournament.lastWinners.map((winner, index) => `<li class="tournament-popup-winner-item">${index + 1}. ${winner}</li>`).join('')}
           </ul>
         </div>
+        <button class="tournament-popup-back">Zurück zur Übersicht</button>
       </div>
     </div>
   `;
@@ -952,6 +953,10 @@ function showTournamentPopup(tournament) {
   // Close button handler
   const closeBtn = popup.querySelector('.tournament-popup-close');
   closeBtn.addEventListener('click', () => popup.remove());
+  
+  // Back button handler
+  const backBtn = popup.querySelector('.tournament-popup-back');
+  backBtn.addEventListener('click', () => popup.remove());
   
   // Close on overlay click
   popup.addEventListener('click', (e) => {
