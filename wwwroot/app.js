@@ -767,14 +767,13 @@ function makeEventCard(event) {
   const place = [event.venue, event.city, event.country].filter(Boolean).join(', ');
   venue.append(makeElement('span', '', place || 'Im EPG nicht angegeben'));
 
-  // Prize money and winner info
+  // Prize money and winner info - small info at the right edge
   const prizeInfo = makeElement('div', 'event-prize-info');
-  // Check if we have prize money data for this tournament
-  const tournamentPrizeMoney = getTournamentPrizeMoney(event.tournament);
-  const lastWinner = getLastTournamentWinner(event.tournament);
-  prizeInfo.append(makeElement('span', '', tournamentPrizeMoney || 'Preisgeld nicht angegeben'));
-  if (lastWinner) {
-    const winnerSpan = makeElement('span', 'event-last-winner', `Letzter Gewinner: ${lastWinner}`);
+    const prizeMoney = getTournamentPrizeMoney(event.tournament);
+    const lastWinners = getLastFiveWinners(event.tournament);
+    prizeInfo.append(makeElement('span', '', prizeMoney || 'Preisgeld in Kürze'));
+    if (lastWinners.length > 0) {
+      const winnerSpan = makeElement('span', 'event-last-winner', lastWinners.slice(0, 3).join(', '));
     prizeInfo.append(winnerSpan);
   }
 

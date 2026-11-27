@@ -172,6 +172,32 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
 .broadcast-chip--unknown::before { background: #70798a; }
 .event-link { color: #677183; font-size: 17px; text-decoration: none; }
 .event-link:hover { color: var(--lime); }
+
+.event-prize-info {
+  grid-column: 5;
+  grid-row: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  justify-content: center;
+  text-align: right;
+  line-height: 1.2;
+}
+.event-prize-info span {
+  color: #8790a0;
+  font: 500 9px/1 var(--display);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.event-last-winner {
+  font-size: 8px;
+  color: #616b7d;
+  line-height: 1.2;
+}
+
 .event-card a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
 
 .empty-state { display: flex; flex-direction: column; align-items: center; padding: 44px 20px 51px; border: 1px dashed #343b4b; border-radius: 9px; background: radial-gradient(ellipse at 50% 23%, rgba(215,245,106,.045), transparent 60%); text-align: center; }
@@ -201,6 +227,7 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
   .select-wrap { flex: 1; }
   .event-card { grid-template-columns: 72px minmax(0, 1fr) minmax(72px, 96px) 16px; gap: 12px; }
   .event-venue { display: none; }
+  .event-prize-info { display: none; }
   .event-match { grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr); }
   .event-title .event-match-info { grid-column: 1 / -1; justify-content: flex-start; max-width: 96px; }
   .event-match .event-match-time { text-align: left; word-wrap: anywhere; white-space: normal; }
@@ -517,17 +544,18 @@ h2 { margin: 0; font: 600 27px/1.15 var(--display); letter-spacing: -.045em; }
     .ranking-name {
       font-size: 11px;
     }
-                .event-stage { grid-column: 2; }
-                .event-stage label { display: none; }
-                .event-stage span { font-size: 9px; }
-                .event-time strong { font-size: 16px; }
-                .event-title strong { font-size: 12px; }
-                .event-venue { display: none; }
-                .event-link { grid-column: 3; grid-row: 1 / span 2; }
-                .schedule-meta { font-size: 9px; }
-                .footer { gap: 7px 14px; }
-                .footer span:nth-child(2) { flex-basis: 100%; order: 1; }
-              }
+      .event-stage { grid-column: 2; }
+      .event-stage label { display: none; }
+      .event-stage span { font-size: 9px; }
+      .event-time strong { font-size: 16px; }
+      .event-title strong { font-size: 12px; }
+      .event-venue { display: none; }
+      .event-prize-info { display: none; }
+      .event-link { grid-column: 3; grid-row: 1 / span 2; }
+      .schedule-meta { font-size: 9px; }
+      .footer { gap: 7px 14px; }
+      .footer span:nth-child(2) { flex-basis: 100%; order: 1; }
+    }
             }
 
                   /* Tournament Popup Styles */
