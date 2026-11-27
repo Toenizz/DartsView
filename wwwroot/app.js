@@ -929,16 +929,12 @@ function showTournamentPopup(tournament) {
         <h3 class="tournament-popup-title">${tournament.name}</h3>
       </div>
       <div class="tournament-popup-content">
-        <div class="tournament-popup-section">
-          <h4 class="tournament-popup-section-title">Austragungsort</h4>
-          <p class="tournament-popup-location">${[tournament.venue, tournament.city, tournament.country].filter(Boolean).join(', ') || 'Nicht angegeben'}</p>
+        <div class="tournament-popup-info-row">
+          <span class="tournament-popup-location">${[tournament.venue, tournament.city, tournament.country].filter(Boolean).join(', ') || 'Ort nicht angegeben'}</span>
+          <span class="tournament-popup-prize">${tournament.prizeMoney || 'Preisgeld in Kürze'}</span>
         </div>
-        <div class="tournament-popup-section">
-          <h4 class="tournament-popup-section-title">Preisgeld</h4>
-          <p class="tournament-popup-prize">${tournament.prizeMoney || 'Preisgeld nicht angegeben'}</p>
-        </div>
-        <div class="tournament-popup-section">
-          <h4 class="tournament-popup-section-title">Letzte Gewinner</h4>
+        <div class="tournament-popup-winners-section">
+          <h4 class="tournament-popup-winners-title">Letzte Gewinner</h4>
           <ul class="tournament-popup-winners">
             ${tournament.lastWinners.map((winner, index) => `<li class="tournament-popup-winner-item">${index + 1}. ${winner}</li>`).join('')}
           </ul>
